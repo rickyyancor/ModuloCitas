@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Emergencia</title>
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="socket.io.js"></script>
+    <script type="text/javascript" src="script.js"></script>
+
+
+
+    <!--<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">-->
+      <!--Import materialize.css-->
+     <link type="text/css" rel="stylesheet" href="materialize/css/materialize.min.css"  media="screen,projection"/>
+  </head>
+<body>
+
+  <nav>
+ <div class="nav-wrapper teal orange darken-2">
+   <a class="brand-logo center">HOSPITAL GENERAL SAN JUAN DE DIOS</a>
+  </div>
+</nav><!--barra superior--->
+<a id="btn_limpiar" class="waves-effect waves-green btn  btn-floating-large pulse  blue darken-1 btn tooltipped" data-position="right" data-delay="50" data-tooltip="Limpiar">Limpiar</a>
+
+
+<div class="container">
+  <div class="row">
+    <br><br>
+     <h3 class="blue-text text-darken-2">Busqueda de pacientes: </h3>
+      <br>
+ <div class="col s12 m6 l3">
+   <div class="input-field">
+            <input id="c_apellido1" type="text" class="validate">
+            <label for="c_apellido1">Primer apellido</label>
+  </div>
+
+</div><!--Cuadricula 1--->
+ <div class="col s12 m6 l3">
+        <div class="input-field">
+          <input id="c_apellido2" type="text" class="validate">
+          <label for="c_apellido2">Segundo apellido</label>
+        </div>
+
+</div><!--Cuadricula 2--->
+
+<div class="col s12 m6 l3">
+  <div class="input-field">
+    <input id="c_documento_identificacion" type="text" class="validate">
+    <label for="c_documento_identifiacion">Documento de identificacion: </label>
+  </div>
+</div><!--Cuadricula 12--->
+
+
+
+
+<a id="btn_consulta" class="waves-effect waves-green btn  btn-floating-large pulse  blue darken-1">Consultar Datos</a>
+
+<p id="paratabla">
+
+<br><br>
+ </div><!--Cierra container---->
+
+
+
+<div class="container">
+  <div class="row">
+    <br><br>
+     <h3 class="blue-text text-darken-2">NUEVOS INGRESOS: </h3>
+      <br>
+ <div class="col s12 m6 l3">
+   <div class="input-field">
+            <input id="apellido1" type="text" class="validate">
+            <label for="apellido1">Primer apellido</label>
+  </div>
+
+</div><!--Cuadricula 1--->
+ <div class="col s12 m6 l3">
+        <div class="input-field">
+          <input id="apellido2" type="text" class="validate">
+          <label for="apellido2">Segundo apellido</label>
+        </div>
+
+</div><!--Cuadricula 2--->
+ <div class="col s12 m6 l3">
+   <div class="input-field">
+     <input id="nombre1" type="text" class="validate">
+     <label for="nombre1">Primer nombre</label>
+   </div>
+ </div><!--Cuadricula 3--->
+ <div class="col s12 m6 l3">
+   <div class="input-field">
+     <input id="nombre2" type="text" class="validate">
+     <label for="nombre2">Segundo nombre</label>
+   </div>
+ </div><!--Cuadricula 4--->
+ <div class="col s12 m6 l3">
+   <div class="input-field">
+     <input id="numero_expediente" type="text" class="validate">
+     <label for="numero_expediente">No. Expediente: </label>
+   </div>
+ </div><!--Cuadricula 5--->
+ <div class="col s12 m6 l3">
+   <div class="input-field">
+     <input id="edad" type="text" class="validate">
+     <label for="edad">Edad: </label>
+   </div>
+ </div><!--Cuadricula 6--->
+ <div class="col s12 m6 l3">
+   <div class="input-field">
+     <input id="lugar_nacimiento" type="text" class="validate">
+     <label for="lugar_nacimiento" ><font color="red">Lugar de nacimiento</font></label>
+   </div>
+ </div><!--Cuadricula 7--->
+ <div class="col s12 m6 l3">
+ <div class="input-field">
+  <font color="red">Fecha de nacimiento</font> <input id="fecha_nac" type="date">
+</div>
+</div><!--Cuadricula 8--->
+ <div class="col s12 m6 l3">
+   <font color="red">SEXO</font>
+   <select id="sexo">
+
+      <option  disabled value="" selected>Sexo</option>
+         <option value="MASCULINO">Masculino</option>
+         <option value="FEMENINO">Femenino</option>
+
+       </select>
+ </div><!--Cuadricula 9--->
+ <div class="col s12 m6 l3">
+   <select id="estado_civil" >
+         <option disabled value="" selected>Estado civil</option>
+         <option value="CASADO">Casado/a</option>
+         <option value="SOLTERO">Soltero/a</option>
+         <option value="VIUDO">Viudo/a</option>
+         <option value="DIVORCIADO">Divorciado/a</option>
+         <option value="SEPARADO">Separado/a</option>
+       </select>
+ </div><!--Cuadricula 9--->
+
+<div class="col s12 m6 l3">
+  <div class="input-field">
+    <input id="ocupacion" type="text" class="validate">
+    <label for="ocupacion">Ocupacion: </label>
+  </div>
+</div><!--Cuadricula 10--->
+<div class="col s12 m6 l3">
+  <div class="input-field">
+    <input id="nacionalidad" type="text" class="validate">
+    <label for="nacionalidad">Nacionalidad: </label>
+  </div>
+</div><!--Cuadricula 11--->
+<div class="col s12 m6 l3">
+  <div class="input-field">
+    <input id="documento_identificacion" type="text" class="validate">
+    <label for="documento_identifiacion">Documento de identificacion: </label>
+  </div>
+</div><!--Cuadricula 12--->
+<div class="col s12 m6 l3">
+  <div class="input-field">
+    <input id="caso_emergencia" type="text" class="validate">
+    <label for="caso_emergencia">En caso de emergencia notificar a: </label>
+  </div>
+</div><!--Cuadricula 13--->
+<div class="col s12 m6 l3">
+  <div class="input-field">
+    <input id="parentesco" type="text" class="validate">
+    <label for="parentesco">Parentesco: </label>
+  </div>
+</div><!--Cuadricula 14--->
+<div class="col s12 m6 l3">
+  <div class="input-field">
+    <input id="direccion" type="text" class="validate">
+    <label for="direccion">Direccion: </label>
+  </div>
+</div><!--Cuadricula 15--->
+<div class="col s12 m6 l3">
+  <div class="input-field">
+    <input id="telefono" type="text" class="validate">
+    <label for="telefono">Telefono: </label>
+  </div>
+</div>
+<!--Cuadricula 16--->
+<div class="col s12 m6 l3">
+  Fecha de la asistencia medica: <input type='date' id="fecha_asistencia" disabled>
+</div>
+<div class="col s12 m6 l3">
+  Hora: <input type="time" id="hora" disabled>
+</div><!--Cuadricula 18--->
+<div class="col s12 m6 l3">
+  <select id="area_urgencia">
+        <option  disabled value="" selected>Area de urgencia</option>
+        <option value="MEDICINA">Medicina</option>
+        <option value="CIRUGIA">Cirugia</option>
+        <option value="TRAUMA">Trauma</option>
+        <option value="OBTESTRICIA">Obstetricia</option>
+        <option value="GINECOLOGIA">Ginecologia</option>
+      </select>
+</div><!--Cuadricula 19---><br><br><br>
+<div class="col s12 m6 l3">
+  <select id="tipo_consulta">
+        <option  disabled value="" selected>Tipo de consula: </option>
+        <option value="urgencia">Urgencia</option>
+        <option value="consulta_externa">Consulta Externa Extemporanea</option>
+</select>
+</div><!--Cuadricula 20--->
+
+<div class="input-field col s12">
+          <textarea id="motivo_consulta" class="materialize-textarea"></textarea>
+          <label for="motivo_consulta">Motivo de la consulta:</label>
+        </div>
+
+        <div class="input-field col s12">
+                  <textarea id="historia_enfermedad" class="materialize-textarea"></textarea>
+                  <label for="historia_enfermedad">Historia enfermedad:</label>
+                </div>
+
+                <div class="input-field col s12">
+                          <textarea id="examen_fisico" class="materialize-textarea"></textarea>
+                          <label for="examen_fisico">Examen fisico: </label>
+                        </div>
+</div><!-- fin row--->
+
+
+
+
+<a id="btn" class="waves-effect waves-green btn  btn-floating-large pulse  blue darken-1">Enviar</a>
+
+<br><br>
+ </div><!--Cierra container---->
+<a class="btn" onclick="Materialize.toast('Llamanos a la extension 6013', 4000, 'rounded')">Necesitas ayuda?</a>
+<footer class="page-footer teal orange darken-2">
+          <div class="container">
+            <div class="row">
+              <div class="col l6 s12">
+                <h5 class="white-text">Depto. Informatica 2017 </h5>
+              </div>
+           </div>
+          </div>
+          <div class="footer-copyright">
+            <div class="container">
+            © 2017 Copyright
+            </div>
+          </div>
+        </footer>
+
+
+
+
+ <script type="text/javascript" src="materialize/js/materialize.min.js"></script>
+ <script type="text/javascript">
+ $(document).ready(function() {
+ $('select').material_select();
+});
+ </script>
+  </body>
+</html>

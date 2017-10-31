@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <title>Angular js</title>
+    <script type="text/javascript" src="angular-1.6.6/angular.min.js"></script>
+  </head>
+  <body>
+<div ng-app="myApp" ng-controller="controlador" ng-init="color = 'lightblue'">
+  <p>Nombre: <input type="text" ng-model="name"></p>
+  <p>Edad: <input type="text" ng-model= "edad"></p>
+  <h1>Hola {{name}} tu edad es {{edad}} años</h1>
+  <p>{{primerNombre+" "+primerApellido+" "+segundoNombre}}</p>
+<br>
+   <input style="background-color:{{color}}" ng-model="color" value="{{color}}">
+</div>
+<script type="text/javascript" src="controller.js">
+</script>
+  </body>
+</html>

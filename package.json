@@ -1,0 +1,25 @@
+{
+  "name": "modulo_citas",
+  "version": "1.0.0",
+  "description": "Modulo para control de citas de hospital San Juan de Dios",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rickyyancor/ModuloCitas.git"
+  },
+  "author": "Ricky Yancor",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rickyyancor/ModuloCitas/issues"
+  },
+  "homepage": "https://github.com/rickyyancor/ModuloCitas#readme",
+  "dependencies": {
+    "express": "^4.16.2",
+    "fs": "0.0.1-security",
+    "socket.io": "^2.0.4",
+    "tedious": "^2.0.0"
+  }
+}

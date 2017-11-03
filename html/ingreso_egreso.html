@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Ingresos</title>
+
+
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <!--Import materialize.css-->
+      <link type="text/css" rel="stylesheet" href="materialize/css/materialize.min.css"  media="screen,projection"/>
+  </head>
+  <body>
+    <nav>
+   <div class="nav-wrapper teal deep-orange darken-3">
+     <a class="brand-logo center">HOSPITAL GENERAL SAN JUAN DE DIOS</a>
+    </div>
+  </nav><!--barra superior--->
+<div class="container">
+
+      <div class="row">
+        <br><br>
+         <h3 class="blue-text text-darken-2">Busqueda de pacientes: </h3>
+          <br>
+     <div class="col s12 m6 l3">
+       <div class="input-field">
+                <input id="c_apellido1" type="text" class="validate">
+                <label for="c_apellido1">Primer apellido</label>
+      </div>
+
+    </div><!--Cuadricula 1--->
+     <div class="col s12 m6 l3">
+            <div class="input-field">
+              <input id="c_apellido2" type="text" class="validate">
+              <label for="c_apellido2">Segundo apellido</label>
+            </div>
+
+    </div><!--Cuadricula 2--->
+
+    <div class="col s12 m6 l3">
+      <div class="input-field">
+        <input id="c_documento_identificacion" type="text" class="validate">
+        <label for="c_documento_identifiacion">Documento de identificacion: </label>
+      </div>
+  </div><!--Cuadricula 12--->
+
+    <a id="btn_consulta" class="waves-effect waves-green btn  btn-floating-large pulse  blue darken-1 btn tooltipped" data-position="bottom" data-delay="50" data-tooltip="Busqueda de pacientes">Consultar Datos</a>
+
+    <p id="paratabla">
+
+    <br><br>
+  </div><!--Cierra row---->
+</div>
+
+<div class="container">
+  <div class="row">
+    <br><br>
+     <h3 class="blue-text text-darken-2">NUEVO INGRESOS: </h3>
+      <br>
+      <div class="col s12 m6 l3">
+        <div class="input-field">
+                 <input id="n1" type="text" class="validate">
+                 <label for="n1">Primer apellido</label>
+       </div>
+     </div><!--Cuadricula 1--->
+     <div class="col s12 m6 l3">
+       <div class="input-field">
+                <input id="n2" type="text" class="validate">
+                <label for="n2">Segundo apellido</label>
+      </div>
+    </div><!--Cuadricula 1--->
+    <div class="col s12 m6 l3">
+      <div class="input-field">
+               <input id="n3" type="text" class="validate">
+               <label for="n3">Primer nombre</label>
+     </div>
+   </div><!--Cuadricula 1--->
+   <div class="col s12 m6 l3">
+     <div class="input-field">
+              <input id="n4" type="text" class="validate">
+              <label for="n4">Segundo nombre</label>
+    </div>
+  </div><!--Cuadricula 1--->
+  <div class="col s12 m6 l3">
+   <div class="input-field">
+            <input id="n5" type="text" class="validate">
+            <label for="n5">No. expediente: </label>
+  </div>
+</div><!--Cuadricula 1--->
+<div class="col s12 m6 l3">
+  <div class="input-field">
+           <input id="n6" type="text" class="validate">
+           <label for="n6">Direccion actual: </label>
+ </div>
+</div><!--Cuadricula 1--->
+<div class="col s12 m6 l3">
+  <div class="input-field">
+           <input id="n7" type="text" class="validate">
+           <label for="n7">Calle o lugar </label>
+ </div>
+</div><!--Cuadricula 1--->
+<div class="col s12 m6 l3">
+  <div class="input-field">
+           <input id="n8" type="text" class="validate">
+           <label for="n8">Municipio </label>
+ </div>
+</div><!--Cuadricula 1--->
+<div class="col s12 m6 l3">
+  <div class="input-field">
+           <input id="n9" type="text" class="validate">
+           <label for="n9">Departamento </label>
+ </div>
+</div><!--Cuadricula 1--->
+<div class="col s12 m6 l3">
+  <div class="input-field">
+           <input id="n10" type="text" class="validate">
+           <label for="n10">Telefono </label>
+ </div>
+</div><!--Cuadricula 1--->
+</div><!--final del row1--->
+
+<div class="row"><!--inicia el 2do row----->
+  <div class="col s12">
+    <blockquote>
+        Direccion habitual
+        </blockquote>
+  </div><!--Cuadricula 1--->
+  <div class="col s12 m6 l3">
+    <div class="input-field">
+             <input id="n11" type="text" class="validate">
+             <label for="n11">Dierccion habitual </label>
+   </div>
+  </div><!--Cuadricula 1--->
+  <div class="col s12 m6 l3">
+    <div class="input-field">
+             <input id="n12" type="text" class="validate">
+             <label for="n12">Calle o lugar </label>
+   </div>
+  </div><!--Cuadricula 1--->
+  <div class="col s12 m6 l3">
+    <div class="input-field">
+             <input id="n13" type="text" class="validate">
+             <label for="n13">Municipio </label>
+   </div>
+  </div><!--Cuadricula 1--->
+  <div class="col s12 m6 l3">
+    <div class="input-field">
+             <input id="n14" type="text" class="validate">
+             <label for="n14">Departamento </label>
+   </div>
+  </div><!--Cuadricula 1--->
+  <div class="col s12 m6 l3">
+    <div class="input-field">
+             <input id="n15" type="text" class="validate">
+             <label for="n15">Telefono </label>
+   </div>
+  </div><!--Cuadricula 1--->
+</div><!--fin del segundo row----->
+<div class="row"><!--Inicia el 3er row------>
+  <div class="col s12 m6 l3">
+    Fecha de nacimiento: <input type='date' id="n16" >
+  </div><!--Cuadricula 1--->
+  <div class="col s12 m6 l3">
+    <div class="input-field">
+             <input id="n17" type="text" class="validate">
+             <label for="n17">Edad </label>
+   </div>
+   </div><!--Cuadricula 1--->
+   <div class="col s12 m6 l3">
+     <div class="input-field">
+              <input id="n18" type="text" class="validate">
+              <label for="n18">Lugar de nacimiento </label>
+    </div>
+    </div><!--Cuadricula 1--->
+
+
+        <div class="col s12 m6 l3">
+          <div class="input-field">
+                   <input id="n21" type="text" class="validate">
+                   <label for="n21">Ocupacion </label>
+         </div>
+        </div><!--Cuadricula 1--->
+</div><!--cerrar 3er row------->
+
+    <div class="row"><!--inicia 4to row---->
+      <div class="col s12 m6 l3">
+        <select id="n20">
+              <option  disabled value="" selected>Estado civil</option>
+              <option value="Casado">Casado/a</option>
+              <option value="Soltero">Soltero/a</option>
+              <option value="Viudo">Viudo/a</option>
+              <option value="Divorciado">Divorciado/a</option>
+              <option value="Separado">Separado/a</option>
+            </select>
+      </div><!--Cuadricula 1--->
+      <div class="col s12 m6 l3">
+        <select id="n19">
+              <option  disabled value="" selected>Sexo</option>
+              <option value="Femenino">Femenino</option>
+              <option value="Masculino">Masculino</option>
+            </select>
+      </div><!--Cuadricula 1--->
+
+      <div class="col s12 m6 l3">
+        <div class="input-field">
+                 <input id="n22" type="text" class="validate">
+                 <label for="n22">Nacionalidad </label>
+       </div>
+      </div><!--Cuadricula 1--->
+      <div class="col s12 m6 l3">
+        <div class="input-field">
+                 <input id="n23" type="text" class="validate">
+                 <label for="n23">Documento de identificacion </label>
+       </div>
+      </div><!--Cuadricula 1--->
+      <div class="col s12 m6 l3">
+        <div class="input-field">
+                 <input id="n24" type="text" class="validate">
+                 <label for="n24">Nombre del conyugue </label>
+       </div>
+      </div><!--Cuadricula 1--->
+      <div class="col s12 m6 l3">
+        <div class="input-field">
+                 <input id="n25" type="text" class="validate">
+                 <label for="n25">Direccion si difiere a la indicada </label>
+       </div>
+      </div><!--Cuadricula 1--->
+    </div><!--fin del 4to row--->
+
+    <div class="row"><!--5to row--->
+      <div class="col s12 m6 l3">
+        <div class="input-field">
+                 <input id="n26" type="text" class="validate">
+                 <label for="n26">Nombre del padre </label>
+       </div>
+      </div><!--Cuadricula 1--->
+      <div class="col s12 m6 l3">
+        <div class="input-field">
+                 <input id="n27" type="text" class="validate">
+                 <label for="n27">Nombre de la madre </label>
+       </div>
+      </div><!--Cuadricula 1--->
+      <div class="col s12 m6 l3">
+        <div class="input-field">
+                 <input id="n28" type="text" class="validate">
+                 <label for="n28">En caso de emergencia notificar a </label>
+       </div>
+      </div><!--Cuadricula 1--->
+      <div class="col s12 m6 l3">
+        <div class="input-field">
+                 <input id="n29" type="text" class="validate">
+                 <label for="n29">Parentesco </label>
+       </div>
+      </div><!--Cuadricula 1--->
+      <div class="col s12 m6 l3">
+        <div class="input-field">
+                 <input id="n30" type="text" class="validate">
+                 <label for="n30">Direccion </label>
+       </div>
+      </div><!--Cuadricula 1--->
+      <div class="col s12 m6 l3">
+        <div class="input-field">
+                 <input id="n31" type="text" class="validate">
+                 <label for="n31">Telefono</label>
+       </div>
+      </div><!--Cuadricula 1--->
+      <div class="col s12 m6 l3">
+        <div class="input-field">
+                 <input id="n32" type="text" class="validate">
+                 <label for="n32">Otras hospitalizaciones</label>
+       </div>
+      </div><!--Cuadricula 1--->
+      <div class="col s12 m6 l3">
+        <div class="input-field">
+                 <input id="n33" type="text" class="validate">
+                 <label for="n33">Referido de </label>
+       </div>
+      </div><!--Cuadricula 1--->
+      <div class="col s12 m6 l3">
+        Fecha de nacimiento: <input type='date' id="n34" >
+      </div><!--Cuadricula 1--->
+      <div class="col s12 m6 l3">
+        Hora: <input type='time' id="n35" >
+      </div><!--Cuadricula 1--->
+      <div class="col s12 m6 l3">
+        <div class="input-field">
+                 <input id="n36" type="text" class="validate">
+                 <label for="servicio">Servicio </label>
+       </div>
+      </div><!--Cuadricula 1--->
+      <div class="col s12 m6 l3">
+       <a class="btn" onclick="Materialize.toast('Llamanos a la extension 6013', 4000, 'rounded')">Necesitas ayuda?</a>
+      </div><!--Cuadricula 1--->
+    </div><!---fin del 5to row---->
+
+
+
+
+
+
+
+
+  <a id="btn" class="waves-effect waves-green btn  btn-floating-large pulse  blue darken-1 btn tooltipped" data-position="bottom" data-delay="50" data-tooltip="Envio de informacion">Enviar</a>
+
+  <br><br>
+
+</div><!--fin del container------->
+
+<footer class="page-footer teal deep-orange darken-3"><!--footer------->
+          <div class="container">
+            <div class="row">
+              <div class="col l6 s12">
+                <h5 class="white-text">Depto. Informatica 2017 </h5>
+              </div>
+           </div>
+          </div>
+          <div class="footer-copyright">
+            <div class="container">
+            © 2017 Copyright
+            </div>
+          </div>
+        </footer>
+
+    <script type="text/javascript" src="jquery-3.2.1.js"></script>
+    <script type="text/javascript" src="socket.io.js"></script>
+    <script type="text/javascript" src="script.js"></script>
+    <script type="text/javascript" src="materialize/js/materialize.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+    $('select').material_select();
+   });
+    </script>
+    <script type="text/javascript">
+
+$(document).ready(function(){
+  $('.tooltipped').tooltip({delay: 50});
+});
+
+    </script>
+  </body>
+</html>

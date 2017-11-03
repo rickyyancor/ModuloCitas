@@ -3,15 +3,31 @@
   <head>
     <meta charset="utf-8">
     <title>Emergencia</title>
-    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="jquery-3.2.1.js"></script>
     <script type="text/javascript" src="socket.io.js"></script>
     <script type="text/javascript" src="script.js"></script>
 
-
-
-    <!--<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">-->
+    <script type="text/javascript">
+    $(document).ready(function() {
+    $('select').material_select();
+  });
+    </script>
+    <script type="text/javascript">
+    $('.timepicker').pickatime({
+default: 'now', // Set default time: 'now', '1:30AM', '16:30'
+fromnow: 0,       // set default time to * milliseconds from now (using with default = 'now')
+twelvehour: false, // Use AM/PM or 24-hour format
+donetext: 'OK', // text for done-button
+cleartext: 'Clear', // text for clear-button
+canceltext: 'Cancel', // Text for cancel-button
+autoclose: false, // automatic close timepicker
+ampmclickable: true, // make AM PM clickable
+aftershow: function(){} //Function for after opening timepicker
+});
+    </script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
       <!--Import materialize.css-->
-     <link type="text/css" rel="stylesheet" href="materialize/css/materialize.min.css"  media="screen,projection"/>
+      <link type="text/css" rel="stylesheet" href="materialize/css/materialize.min.css"  media="screen,projection"/>
   </head>
 <body>
 
@@ -20,52 +36,10 @@
    <a class="brand-logo center">HOSPITAL GENERAL SAN JUAN DE DIOS</a>
   </div>
 </nav><!--barra superior--->
-<a id="btn_limpiar" class="waves-effect waves-green btn  btn-floating-large pulse  blue darken-1 btn tooltipped" data-position="right" data-delay="50" data-tooltip="Limpiar">Limpiar</a>
-
-
 <div class="container">
   <div class="row">
     <br><br>
-     <h3 class="blue-text text-darken-2">Busqueda de pacientes: </h3>
-      <br>
- <div class="col s12 m6 l3">
-   <div class="input-field">
-            <input id="c_apellido1" type="text" class="validate">
-            <label for="c_apellido1">Primer apellido</label>
-  </div>
-
-</div><!--Cuadricula 1--->
- <div class="col s12 m6 l3">
-        <div class="input-field">
-          <input id="c_apellido2" type="text" class="validate">
-          <label for="c_apellido2">Segundo apellido</label>
-        </div>
-
-</div><!--Cuadricula 2--->
-
-<div class="col s12 m6 l3">
-  <div class="input-field">
-    <input id="c_documento_identificacion" type="text" class="validate">
-    <label for="c_documento_identifiacion">Documento de identificacion: </label>
-  </div>
-</div><!--Cuadricula 12--->
-
-
-
-
-<a id="btn_consulta" class="waves-effect waves-green btn  btn-floating-large pulse  blue darken-1">Consultar Datos</a>
-
-<p id="paratabla">
-
-<br><br>
- </div><!--Cierra container---->
-
-
-
-<div class="container">
-  <div class="row">
-    <br><br>
-     <h3 class="blue-text text-darken-2">NUEVOS INGRESOS: </h3>
+     <h3 class="blue-text text-darken-2">INGRESOS: </h3>
       <br>
  <div class="col s12 m6 l3">
    <div class="input-field">
@@ -108,27 +82,26 @@
  <div class="col s12 m6 l3">
    <div class="input-field">
      <input id="lugar_nacimiento" type="text" class="validate">
-     <label for="lugar_nacimiento" ><font color="red">Lugar de nacimiento</font></label>
+     <label for="lugar_nacimiento">Lugar de nacimiento: </label>
    </div>
  </div><!--Cuadricula 7--->
  <div class="col s12 m6 l3">
  <div class="input-field">
-  <font color="red">Fecha de nacimiento</font> <input id="fecha_nac" type="date">
+  Fecha de nacimiento: <input id="fecha_nac" type="date">
 </div>
-</div><!--Cuadricula 8--->
- <div class="col s12 m6 l3">
-   <font color="red">SEXO</font>
-   <select id="sexo">
 
-      <option  disabled value="" selected>Sexo</option>
+ </div><!--Cuadricula 8--->
+ <div class="col s12 m6 l3">
+   <select>
+         <option id="sexo" disabled value="" selected>Sexo</option>
          <option value="MASCULINO">Masculino</option>
          <option value="FEMENINO">Femenino</option>
 
        </select>
  </div><!--Cuadricula 9--->
  <div class="col s12 m6 l3">
-   <select id="estado_civil" >
-         <option disabled value="" selected>Estado civil</option>
+   <select>
+         <option id="estado_civil" disabled value="" selected>Estado civil</option>
          <option value="CASADO">Casado/a</option>
          <option value="SOLTERO">Soltero/a</option>
          <option value="VIUDO">Viudo/a</option>
@@ -178,17 +151,16 @@
     <input id="telefono" type="text" class="validate">
     <label for="telefono">Telefono: </label>
   </div>
-</div>
-<!--Cuadricula 16--->
+</div><!--Cuadricula 16--->
 <div class="col s12 m6 l3">
-  Fecha de la asistencia medica: <input type='date' id="fecha_asistencia" disabled>
-</div>
+  Fecha de la asistencia medica: <input type='date' id="fecha_asistencia" >
+</div><!--Cuadricula 17--->
 <div class="col s12 m6 l3">
-  Hora: <input type="time" id="hora" disabled>
+  Hora: <input type="time" id="hora">
 </div><!--Cuadricula 18--->
 <div class="col s12 m6 l3">
-  <select id="area_urgencia">
-        <option  disabled value="" selected>Area de urgencia</option>
+  <select>
+        <option id="area_urgencia" disabled value="" selected>Area de urgencia</option>
         <option value="MEDICINA">Medicina</option>
         <option value="CIRUGIA">Cirugia</option>
         <option value="TRAUMA">Trauma</option>
@@ -197,8 +169,8 @@
       </select>
 </div><!--Cuadricula 19---><br><br><br>
 <div class="col s12 m6 l3">
-  <select id="tipo_consulta">
-        <option  disabled value="" selected>Tipo de consula: </option>
+  <select>
+        <option id="tipo_consulta" disabled value="" selected>Tipo de consula: </option>
         <option value="urgencia">Urgencia</option>
         <option value="consulta_externa">Consulta Externa Extemporanea</option>
 </select>
@@ -211,7 +183,7 @@
 
         <div class="input-field col s12">
                   <textarea id="historia_enfermedad" class="materialize-textarea"></textarea>
-                  <label for="historia_enfermedad">Historia enfermedad:</label>
+                  <label for="historia_enfermedad">Motivo de la consulta:</label>
                 </div>
 
                 <div class="input-field col s12">
@@ -224,10 +196,9 @@
 
 
 <a id="btn" class="waves-effect waves-green btn  btn-floating-large pulse  blue darken-1">Enviar</a>
-
 <br><br>
  </div><!--Cierra container---->
-<a class="btn" onclick="Materialize.toast('Llamanos a la extension 6013', 4000, 'rounded')">Necesitas ayuda?</a>
+
 <footer class="page-footer teal orange darken-2">
           <div class="container">
             <div class="row">
@@ -247,10 +218,5 @@
 
 
  <script type="text/javascript" src="materialize/js/materialize.min.js"></script>
- <script type="text/javascript">
- $(document).ready(function() {
- $('select').material_select();
-});
- </script>
   </body>
 </html>

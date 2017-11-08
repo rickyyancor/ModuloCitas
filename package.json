@@ -19,6 +19,7 @@
   "dependencies": {
     "express": "^4.16.2",
     "fs": "0.0.1-security",
+    "pdfkit": "^0.8.3",
     "socket.io": "^2.0.4",
     "tedious": "^2.0.0"
   }

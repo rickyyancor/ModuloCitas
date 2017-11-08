@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>MENU</title>
+    <link rel="stylesheet" href="sweetalert2/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="public/css/mi_css.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="materialize/css/materialize.min.css">
+    <script type="text/javascript" src="jquery-3.2.1.js"></script>
+    <script type="text/javascript" src="script.js"></script>
+    <script type="text/javascript" src="sweetalert2/dist/sweetalert2.min.js"></script>
+    <script type="text/javascript" src="materialize/js/materialize.min.js"></script>
+
+
+
+
+  </head>
+  <body>
+
+
+
+    <div class="row"><!--INICIA ROW GRANDE------>
+
+         <div class="col s3">
+           <!-- Grey navigation panel -->
+           <ul id="slide-out" class="side-nav side-nav fixed collapsible" data-collapsible="accordion">
+               <li><div class="user-view">
+                <a href="#!user"><img style="text-align:center;"src="img/lh.png"></a>
+                <p style="text-align:center;color:#01579b;">SIGESHOP</p>
+               </div></li>
+               <li><div class="divider"></div></li>
+                <li>
+                  <div class="collapsible-header"><span class="blue-text name">Citas</span></div>
+                  <div class="collapsible-body ">
+                 <a id="link_crear_cita" href="#!"><p style="text-align:center;color:gray;">Crear cita</p></a>
+                 <a id="link_buscar_cita" href="#!"><p style="text-align:center;color:gray;">Buscar cita</p></a>
+               </div>
+               </li>
+               <li>
+                 <div class="collapsible-header"><span class="blue-text name">Admisiones</span></div>
+                 <div class="collapsible-body ">
+                <a id="link_crear_cita" href="#!"><p style="text-align:center;color:gray;">Hoja de ingresos</p></a>
+                <a id="link_buscar_cita" href="#!"><p style="text-align:center;color:gray;">Hoja de urgencia</p></a>
+              </div>
+              </li>
+             </ul>
+             <a href="#" data-activates="slide-out" class="button-collapse"><img  src="img/lh.png"></a>
+
+         </div>
+<!---inicia GRID DERECHA---------->
+         <div class="col s9"><!--INICIA DIV DERECHA----->
+           <!-- contenido -->
+             <div id="crear_citas" style="display:none;"><!--INICIA DIV DE CREAR CITAS----------->
+            <!--INICIA CONTAINER----->
+              <div class="row">
+                <br><br>
+                 <h2  id="titulo" class=" blue-text text-darken-2">CITAS: </h2>
+                  <br>
+              </div><!--fin del row------>
+              <div id="busqueda"class="row "><!--inicia row------>
+                <p class="flow-text">Ingrese número de carné del paciente </p>
+                <div class="col col s12 m6 l3">
+
+                  <div class="input-field ">
+                           <input id="nexpediente" type="text" class="validate">
+                           <label for="nexpediente">Número de carné: </label>
+                 </div>
+
+               </div><!--Cuadricula 1--->
+
+               <div class="col s6"><!--boton--------->
+                         <a id="btnBuscar" class="waves-effect waves-light btn-large">Buscar</a>
+              </div><!--fin boton--->
+            </div><!--fin row------>
+             <div id="tabla" class="row">
+               <table class="striped centered">
+                   <thead>
+                     <tr>
+                         <th>Nombre del paciente</th>
+                         <th>No. de expediente</th>
+                         <th>Documento de identificacion</th>
+                     </tr>
+                   </thead>
+                  <tbody>
+                     <tr>
+                       <td><p id='tdnombre'/></td>
+                       <td><p id='tdexpediente'/></td>
+                       <td><p id='tdidentificacion'/></td>
+                     </tr>
+                   </tbody>
+                 </table>
+               </div>
+
+             <div id="selecciones" class="row "><!--inicia row------>
+               <div class="input-field col s6">
+                 <p class="flow-text">Seleccione el área: </p>
+                 <select id ="area">
+                   <option disabled selected>Areas</option>
+                 </select>
+               </div>
+               <div class="input-field col s6">
+                 <p class="flow-text">Seleccione una clinica: </p>
+             <select id="clinica">
+
+             </select>
+             </div>
+             <div class="input-field col s6">
+               <p class="flow-text">Seleccione un medico: </p>
+             <select id="medico">
+             <option disabled selected>Medicos</option>
+             </select>
+         </div>
+         <div class="input-field col s6">
+           <p class="flow-text">Fecha de la cita: </p>
+         <input type="text" id="fechaCita">
+         </div>
+         <div class="input-field col s6">
+           <p class="flow-text">Hora de la cita: </p>
+         <input type="text" id="horaCita"  >
+         </div>
+
+              </div><!--fin row busqueda--->
+              <div id="divBotonGuardar" class="row"><!--nuevo row----->
+                <div class="col s6"><!--boton--------->
+                  <a id="btnGuardar" class="waves-effect waves-light btn-large">Guardar</a>
+               </div><!--fin boton--->
+             </div><!--fin nuevorow--->
+
+              <div id="divBotonGuardar" class="row"><!--row nueva cita----->
+                <div class="col s4"><!--boton--------->
+
+               </div><!--fin boton--->
+               <div class="col s4"><!--boton--------->
+                 <p id="textoNueva" style="text-align:left; display:none;" class="flow-text">Crear una nueva cita</p>
+                 <a id="btnNueva" class="waves-effect waves-light btn-large">Nueva cita</a>
+              </div><!--fin boton--->
+              <div class="col s4"><!--boton--------->
+
+             </div><!--fin boton--->
+
+          </div><!--fin row nueva cita--->
+          <!--fin container------>
+
+        </div><!--FIN DIV CREAR CITAS--------->
+
+
+        <!--INICIA DIV PARA BUSQUEDA DE CITAS----------->
+          <div id="busqueda_cita" style="display:none;">
+            <div class="row">
+              <br><br>
+              <h2  id="titulo_busqueda" class=" blue-text text-darken-2">Busqueda: </h2>
+              <br>
+            </div><!--fin del row del titulo------>
+            <div id="busqueda_citas"class="row "><!--inicia row------>
+              <p class="flow-text">Ingrese número de carné del paciente </p>
+              <div class="col col s12 m6 l3">
+
+                <div class="input-field ">
+                         <input id="nexpediente_busqueda" type="text" class="validate">
+                         <label for="nexpediente_busqueda">Número de carné: </label>
+               </div>
+
+             </div><!--Cuadricula 1--->
+
+             <div class="col s6"><!--boton--------->
+                       <a id="btnBuscarcita" class="waves-effect waves-light btn-large">Buscar</a>
+            </div><!--fin boton--->
+          </div><!--fin row------>
+
+          <div id="tabla_citas" class="row" style="display:none;"><!--row de la tabla---->
+            <table class="striped centered">
+                <thead>
+                  <tr>
+
+                      <th>Fecha</th>
+                      <th>Hora</th>
+                      <th>Clinica</th>
+                      <th>Medico</th>
+                  </tr>
+                </thead>
+               <tbody>
+                  <tr>
+
+                    <td>27 noviembre 2017</td>
+                    <td>12:00</td>
+                    <td>Problemas de identida del genero</td>
+                    <td>Damesio O' Jhon</td>
+                  </tr>
+
+                </tbody>
+              </table>
+            </div><!--fin row cita------->
+
+         </div><!--FIN DIV DE BUSQUEDA DE CITAS-------->
+          
+       </div><!--FIN GRID DERECHA------------->
+
+     </div><!--FIN ROW PRINCIPAL----------->
+
+
+
+
+
+
+  </body>
+</html>

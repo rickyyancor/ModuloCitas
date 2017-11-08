@@ -5,133 +5,14 @@
     <title>Citas</title>
     <script type="text/javascript" src="jquery-3.2.1.js"></script>
     <script type="text/javascript" src="script.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="sweetalert2/dist/sweetalert2.min.js"></script>
+
+    <script type="text/javascript" src="datetimepicker/jquery.datetimepicker.js"></script>
     <link rel="stylesheet" href="sweetalert2/dist/sweetalert2.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
       <!--Import materialize.css-->
     <link type="text/css" rel="stylesheet" href="materialize/css/materialize.min.css"  media="screen,projection"/>
-<script type="text/javascript">
-
-$(document).ready(function() {
-$('select').material_select();
-});
-</script>
-<script type="text/javascript">
-var numero;
-var longitud;
-var area, time,date,medico,clinica;
-//validacion de numeros
-
-
-$(document).ready(function(){
-
-$('#nexpediente').keypress(function(e){
-
-tecla = (document.all) ? e.keyCode : e.which;
-
-  //Tecla de retroceso para borrar, siempre la permite
-  if (tecla==8){
-      return true;
-  }
-
-  // Patron de entrada, en este caso solo acepta numeros
-  patron =/[0-9]/;
-  tecla_final = String.fromCharCode(tecla);
-  return patron.test(tecla_final);
-})
-
-  $('#selecciones').hide();
-  $('#divBotonGuardar').hide();
-  $('#tabla').hide();
-  //$('#btnNueva').hide();
-  //funcion para el boton de busqueda
-  $("#btnBuscar").click(function()
-          {
-
-            numero = $('#nexpediente').val();
-            longitud = numero.length;
-            //validacion para campo del numero de carne
-            if(longitud == 11 && longitud!=null){
-              $('#selecciones').show(300);
-              $('#busqueda').hide(300);
-              $('#divBotonGuardar').show(300);
-              $('#tabla').show(300);
-
-            }//FIN DEL IF
-            else
-            {
-              swal('Debe ingresar un numero de carné valido');
-              $('#nexpediente').show(300);
-            }//FIN ELSE
-
-
-
-
-
-          });//FIN FUNCION ONCLICK
-
-});//FIN DOCUMENT READY
-//boton guardar
-
-$(document).ready(function(){
-  $("#btnGuardar").click( function()
-          {
-              area = $('#area').val();
-              medico= $('#medico').val();
-              time= $('#horaCita').val();
-              date= $('#fechaCita').val();
-              clinica=$('#clinica').val();
-            if (area=="" || medico=="" || time=="" || date=="" || clinica=="" )
-            {
-              swal('Debe llenar todos los campos');
-            }
-            else
-            {
-              $('#selecciones').hide(200);
-              $('#divBotonGuardar').hide(200);
-              $('#tabla').show(200);
-              //mensaje
-              swal({
-                title: 'Desea crear la cita?',
-                text: "Debe estar seguro de los datos del paciente!",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Si, guardar cita!',
-                cancelButtonText: 'No, cancelar!',
-                confirmButtonClass: 'btn btn-success',
-                cancelButtonClass: 'btn btn-danger',
-                buttonsStyling: false
-              }).then(function () {
-                swal(
-                  'Cita creada!',
-                  'La cita se ha creado con exito.',
-                  'success'
-                )
-                }, function (dismiss) {
-                  // dismiss can be 'cancel', 'overlay',
-                  // 'close', and 'timer'
-                  if (dismiss === 'cancel') {
-                    swal(
-                      'Cancelada',
-                      'La cita ha sido cancelada',
-                      'error'
-                    )
-                  }
-})
-
-              //fin mensaje
-
-            }
-
-
-
-});
-
-});
-
-</script>
   </head>
   <body>
     <nav>
@@ -150,7 +31,7 @@ $(document).ready(function(){
        <div class="col s12 m6 l3">
 
          <div class="input-field ">
-                  <input id="nexpediente" type="text" class="validate">
+                  <input id="nexpediente" type="text" class="validate" autofocus="true">
                   <label for="nexpediente">Número de carné: </label>
         </div>
 
@@ -161,7 +42,7 @@ $(document).ready(function(){
      </div><!--fin boton--->
    </div><!--fin row------>
     <div id="tabla" class="row">
-      <table class="responsive-table">
+      <table class=" striped centered">
           <thead>
             <tr>
                 <th>Nombre del paciente</th>
@@ -171,9 +52,9 @@ $(document).ready(function(){
           </thead>
          <tbody>
             <tr>
-              <td>Ricky Yancor</td>
-              <td>00000001</td>
-              <td>2014453131561</td>
+              <td><p id='tdnombre'/></td>
+              <td><p id='tdexpediente'/></td>
+              <td><p id='tdidentificacion'/></td>
             </tr>
 
           </tbody>
@@ -181,40 +62,31 @@ $(document).ready(function(){
       </div>
 
     <div id="selecciones" class="row "><!--inicia row------>
-      <div class="input-field col s12 m6 l3">
+      <div class="input-field col s6">
         <p class="flow-text">Seleccione el área: </p>
-    <select>
-      <option id="area" disabled selected>Areas</option>
-      <option value="1">Adultos</option>
-      <option value="2">Pediatria</option>
-      <option value="3">Gine</option>
+    <select id ="area">
+      <option disabled selected>Areas</option>
     </select>
   </div>
-  <div class="input-field col s12 m6 l3">
+  <div class="input-field col s6">
     <p class="flow-text">Seleccione una clinica: </p>
-<select>
-  <option id="clinica" disabled selected>Clinicas</option>
-  <option value="1">Clinica 34</option>
-  <option value="2">Clinica 23</option>
-  <option value="3">Clinica 12</option>
+<select id="clinica">
+
 </select>
 </div>
-<div class="input-field col s12 m6 l3">
+<div class="input-field col s6">
   <p class="flow-text">Seleccione un medico: </p>
-<select>
-<option id="medico" disabled selected>Medicos</option>
-<option value="1">Dr. XXX</option>
-<option value="2">Dr. YYY</option>
-<option value="3">Dr. WWW</option>
+<select id="medico">
+<option disabled selected>Medicos</option>
 </select>
 </div>
-<div class="input-field col s12 m6 l3">
+<div class="input-field col s6">
   <p class="flow-text">Fecha de la cita: </p>
-<input type="date" id="fechaCita">
+<input type="text" id="fechaCita">
 </div>
-<div class="input-field col s12 m6 l3">
+<div class="input-field col s6">
   <p class="flow-text">Hora de la cita: </p>
-<input type="time" id="horaCita">
+<input type="text" id="horaCita">
 </div>
 
      </div><!--fin row busqueda--->

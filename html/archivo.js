@@ -114,7 +114,7 @@ socket.on('tabla_archivo',(data)=>{
 });//end on llenar servicios
 
 socket.on('listado_exitoso',(data) =>{
-    window.open("http://10.10.11.153:3000"+data);
+    window.open(data);
 });
 
 

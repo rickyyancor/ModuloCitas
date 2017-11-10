@@ -4,8 +4,29 @@ $(document).ready(function() {
   var numerocita;//agregar|
   var longitudcita;//agregar|
   ///nuevo menu
+  var altura, ancho// aca otro cambio +
+            altura = screen.height
+            ancho = screen.width
+            if(altura<= 843 && ancho <= 412){
+                $('#icono').hide();
+                $('#columnapequeña').hide();
+                $('#columnagrande').removeClass('col s9');
+                $('#columnagrande').addClass('col s12')
+                $('#selecciones').addClass('col s10')
+            }else{
+                    console.log('No pasa nad papu')
+            }
+
 $('.collapsible').collapsible();
-$(".button-collapse").sideNav();
+$('.button-collapse').sideNav({
+                menuWidth: 300, // Default is 300
+                edge: 'left', // Choose the horizontal origin
+                closeOnClick: true, // Closes side-nav on <a> clicks, useful for Angular/Meteor
+                draggable: true, // Choose whether you can drag to open on touch screens,
+                onOpen: function(el) {$('#icono').hide(300)  },
+                onClose: function(el) { },
+              }
+            );
   $('#link_crear_cita').click(function(){//agregar |
 
         $('#crear_citas').show(300);
@@ -33,8 +54,9 @@ $(".button-collapse").sideNav();
             //validacion para campo del numero de carne
             if(longitudcita == 11 && longitudcita!=null){
               $('#tabla_citas').show(300);
-              $('#busqueda_citas').hide(300);
-
+              //$('#busqueda_citas').hide(300);
+              var dat={no_expediente:numerocita}
+              socket.emit('buscar_cita_expediente',dat);
             }//FIN DEL IF
             else
             {
@@ -115,7 +137,11 @@ var linea_cliente=0;
 
 });//end on llenar servicios
 
+socket.on('llenar_tabla_citas_exp',function (data) {
+  console.log(data);
+  $('#paratablacitas_exp').html(data);
 
+});
 
 
 $("#btn").click(function(){
@@ -222,7 +248,7 @@ socket.on('cita_exitosa',(data) =>{
   $('#btnNueva').show(300);
   $('#textoNueva').show(300);
 
-    window.open("http://10.10.11.153:3000"+data);
+    window.open(data);
 });
 
 

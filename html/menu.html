@@ -2,6 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <title>MENU</title>
     <link rel="stylesheet" href="sweetalert2/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="public/css/mi_css.css">
@@ -17,12 +18,18 @@
 
   </head>
   <body>
-
+    <header>
+          <nav>
+        <div class="nav-wrapper  blue darken-1">
+          <a href="#" class="brand-logo center">Citas</a>
+        </div>
+        </nav>
+        </header>
 
 
     <div class="row"><!--INICIA ROW GRANDE------>
 
-         <div class="col s3">
+         <div id ="columnaPequeña" class="col s3">
            <!-- Grey navigation panel -->
            <ul id="slide-out" class="side-nav side-nav fixed collapsible" data-collapsible="accordion">
                <li><div class="user-view">
@@ -45,11 +52,11 @@
               </div>
               </li>
              </ul>
-             <a href="#" data-activates="slide-out" class="button-collapse"><img  src="img/lh.png"></a>
+             <a id="icono" href="#" data-activates="slide-out" class="button-collapse"><img  src="img/lh.png"></a>
 
          </div>
 <!---inicia GRID DERECHA---------->
-         <div class="col s9"><!--INICIA DIV DERECHA----->
+         <div id="columnagrande" class="col s9"><!--INICIA DIV DERECHA----->
            <!-- contenido -->
              <div id="crear_citas" style="display:none;"><!--INICIA DIV DE CREAR CITAS----------->
             <!--INICIA CONTAINER----->
@@ -169,27 +176,7 @@
           </div><!--fin row------>
 
           <div id="tabla_citas" class="row" style="display:none;"><!--row de la tabla---->
-            <table class="striped centered">
-                <thead>
-                  <tr>
-
-                      <th>Fecha</th>
-                      <th>Hora</th>
-                      <th>Clinica</th>
-                      <th>Medico</th>
-                  </tr>
-                </thead>
-               <tbody>
-                  <tr>
-
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-
-                </tbody>
-              </table>
+            <p id="paratablacitas_exp">
             </div><!--fin row cita------->
 
          </div><!--FIN DIV DE BUSQUEDA DE CITAS-------->

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>ARCHIVO</title>
+      <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="sweetalert2/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="public/css/mi_css.css">
+    <link rel="stylesheet" href="materialize/css/materialize.min.css">
+    <script type="text/javascript" src="jquery-3.2.1.js"></script>
+    <script type="text/javascript" src="archivo.js"></script>
+    <script type="text/javascript" src="sweetalert2/dist/sweetalert2.min.js"></script>
+    <script type="text/javascript" src="materialize/js/materialize.min.js"></script>
+    <script type="text/javascript">
+
+
+
+
+    </script>
+  </head>
+  <body>
+    <div class="contenedor">
+
+
+    <nav>
+  <div class="nav-wrapper  blue darken-1">
+    <a href="#" class="brand-logo center">Archivos</a>
+  </div>
+</nav>
+
+
+
+    <div class="row"><!--INICIA ROW GRANDE------>
+
+         <div id="columnaPequeña"class="col s3 ">  <!--lateral--------->
+           <!-- Grey navigation panel -->
+           <ul id="slide-out" class="side-nav side-nav fixed collapsible" data-collapsible="accordion">
+               <li><div class="user-view">
+                <a href="#!user"><img style="text-align:center;"src="img/lh.png"></a>
+                <p style="text-align:center;color:#01579b;">SIGESHOP</p>
+               </div></li>
+               <li><div class="divider"></div></li>
+                <li>
+                  <div class="collapsible-header"><span class="blue-text name">Archivos</span></div>
+                  <div class="collapsible-body ">
+                 <a id="link_registros" href="#!"><p  style="text-align:center;color:gray;">Consultar citas</p></a>
+
+               </div>
+               </li>
+               <li>
+                 <div class="collapsible-header"><span class="blue-text name">Admisiones</span></div>
+                 <div class="collapsible-body ">
+                <a id="link_crear_cita" href="#!"><p style="text-align:center;color:gray;">Hoja de ingresos</p></a>
+                <a id="link_buscar_cita" href="#!"><p style="text-align:center;color:gray;">Hoja de urgencia</p></a>
+              </div>
+              </li>
+             </ul>
+             <a href="#" id="icono" data-activates="slide-out" class="button-collapse"><img  src="img/lh.png"></a>
+
+         </div>
+<!---inicia GRID DERECHA---------->
+
+         <div id="columnagrande" class="col s9 "><!--INICIA DIV DERECHA----->
+           <div id="archivosMedicos" style="display:none;">
+                <div class="row" id="titulo1">
+                 <h1 class="thin text-blue darken-1">Registro de citas</h1>
+                 </div><!--Cuadricula 1--->
+                 <div class="row" id="seleccion">
+                   <div class="input-field col s6">
+                     <p class="flow-text">Fecha de la cita: </p>
+                   <input type="text" id="fechaRegistros">
+                 </div>
+                 <div class="input-field col s6">
+                   <p class="flow-text">Seleccione su nombre: </p>
+                   <select id="users" >
+                   <option   disabled selected>Usuarios</option>
+                   <option value="1">Ana Romero</option>
+                   <option value="2">Mario </option>
+                   <option value="3">Amabilia Morataya</option>
+                   <option value="4">Soila Mijangos</option>
+                   <option value="5">Karla Garcia</option>
+                   <option value="6">Walter Castillo</option>
+                   <option value="7">Henrry Morales</option>
+                   </select>
+                 </div>
+                 <div class="col s6 "><!--boton--------->
+                           <a id="btnBuscarRegistros" class="waves-effect waves-light btn-large">Buscar</a>
+                </div><!--fin boton--->
+                 </div>
+                 <div  style="display:none;" id="tablaRegistros" class="col s12 ">
+                   <p id="paratablaexp">
+
+                  <br>
+                    </div>
+                    <div id="recargar" class="row" style="display:none";>
+                      <div class="col s4">
+
+                      </div>
+                      <div class="col s4">
+                        <a id="btnrefrescar" class="waves-effect waves-light btn-large">Nueva busqueda</a>
+                        <br><br>
+                        <a id="btnimprimir" class="waves-effect waves-light btn-large">Imprimir</a>
+
+                      </div>
+
+
+                      <div class="col s4">
+
+                      </div>
+                    </div>
+
+              </div><!--div con todo--------->
+       </div><!--FIN GRID DERECHA------------->
+
+     </div><!--FIN ROW PRINCIPAL----------->
+
+   </div><!--contenedor--------->
+  </body>
+
+</html>

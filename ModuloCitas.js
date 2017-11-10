@@ -17,6 +17,59 @@ app.get('/', function (req, res) {
 res.send(Configuracion_Base);
 });
 
+require('console-stamp')(console, '[HH:MM:ss]');
+
+var UNIDADES=[];
+
+function cargar_nombre_unidades(data,per)
+{
+  var Base_de_Datos= new Conexion_BD(Configuracion_Base_saho);
+  var Servicio='<option  disabled selected>Clinicas</option>';
+  //console.log(data);
+  Base_de_Datos.on('connect', function(err)
+  {
+    if (err) {console.log(err);}
+    else
+    {
+        //console.log("Exito al conectar");
+
+        var cadena ="sp_servicio_tipo_unidad @numero";
+
+            request = new Request(cadena,function(err, rowcount) { if (err) {console.log("Error en el request"+err);} if (rowcount) {
+
+                }
+                //console.log(rowcount);
+                Base_de_Datos.close();
+            });//fin del request
+            request.addParameter('numero',TYPES.Int,data);
+
+            request.on('doneProc',function (rowCount, more, rows) {
+                Servicio+=""
+                //console.log("El procedimiento ha terminado ");
+            });
+            request.on('row',function(columns) {
+              var id=columns[0].value.toString();
+              var nombre_clinica=columns[1].value.toString().replace(/clinica de la/gi,'').replace(/clinica del/gi,'').replace(/clinica de/gi,'').replace(/clinica/gi,'');;
+
+                UNIDADES[id]=per+"  "+nombre_clinica;
+                //console.log(UNIDADES[id]);
+            });
+
+            Base_de_Datos.execSql(request);
+
+    }
+  });//fin de connect
+  Base_de_Datos.on('error',function(err) {
+    console.log("se ha llamado a la funcion error :  \n"+err);
+    Base_de_Datos= new Conexion_BD(Configuracion_Base);
+  });
+}
+
+cargar_nombre_unidades(1303,"Adultos");
+cargar_nombre_unidades(1304,"Pediatria");
+cargar_nombre_unidades(1305,"Gineco-Obstetricia");
+console.log("Server Iniciado correctamente");
+
 io.sockets.on('connection',function(socket) {
 
   socket.on('prueba',function(data) {
@@ -59,8 +112,109 @@ io.sockets.on('connection',function(socket) {
     console.log(data);
   });//cierre socket on prueba
 
+var listado_imprimir={}
+var key_listado = 'Citas';
+listado_imprimir[key_listado] = [];
+socket.on('imprimir_listado_archivo',function(data) {
+  PDFDocument = require('pdfkit');
+  doc = new PDFDocument
+  fs = require('fs');
+  doc.pipe(fs.createWriteStream('html/Reportes/Listado_'+cliente+".pdf"));
+
+  doc.image(__dirname+'/html/img/lh.png', 50, 20, {width: 100});
+  doc.moveUp();doc.moveUp();doc.moveUp();
+  doc.fontSize(14).font('Times-Roman').fillColor('#005B99').text("                       Hospital General San Juan de Dios");
+  doc.fontSize(14).text("                       Sistema de Gestion Hospitalaria");
+  doc.fontSize(14).text("                       Registros medicos");
+  doc.moveUp();
+  doc.fontSize(5).text(".");
+  doc.fontSize(14).text("                       ______________________________________________________");
+  doc.moveDown();
+
+  doc.moveDown();
+  doc.fontSize(14).fillColor('black').text("                                                Busqueda de Expedientes");
+doc.moveDown();
+  doc.fontSize(14).fillColor('black').text("Usuario: "+data.nombre_personal);
+
+  doc.fontSize(14).fillColor('black').text("Fecha: "+data.fecha);
+  doc.fontSize(14).text("Cantidad de Expedientes: "+listado_imprimir[key_listado].length);
+
+  doc.moveDown();doc.moveDown();
+  //console.log(listado_imprimir[key_listado][0])
+  doc.fontSize(10).text("No.    Expediente    " +"  "+"Servicio    Unidad");
+  doc.moveUp();
+  doc.fontSize(10).text("  Entregado          Recibido    ",{align: 'right'});
+  doc.fontSize(5).text(".");
+  for(var i=0; i<listado_imprimir[key_listado].length;i++)
+  {
+    doc.fontSize(10).text((i+1001).toString().substring(1,4)+"   "+listado_imprimir[key_listado][i].exp +"    "+listado_imprimir[key_listado][i].unidad);
+    doc.moveUp();
+    doc.fontSize(10).text("__________     __________",{align: 'right'});
+
+    doc.fontSize(5).text(".");
+  }
+  doc.fontSize(12).text('         1a Avenida 10-50 Zona1, Sotano- TELEFONO: PBX: 22219191 EXT 6012-6013-DIRECTO: 23219124', 20, doc.page.height - 50,{
+    lineBreak: false
+  });
+  doc.end();
+    socket.emit('listado_exitoso',"/Reportes/Listado_"+cliente+".pdf");
+    console.log("Solicitud de impresion desde cliente: "+cliente);
 
 
+//console.log(listado_imprimir);
+})
+
+  socket.on('archivo',function(data) {
+    //console.log(data);
+    var Base_de_Datos= new Conexion_BD(Configuracion_Base);
+    var Servicio='<div id="tabla_expedientes" class="row"><table class=" striped centered"> <thead><tr> <th>No. de expediente</th> <th>Clinica</th> </tr> </thead> <tbody>';
+    Base_de_Datos.on('connect', function(err)
+    {
+      if (err) {console.log(err);}
+      else
+      {
+          //console.log("Exito al conectar");
+
+          var cadena ="sp_archivo_listado @empleado , @fecha";
+          listado_imprimir={}
+          key_listado = 'Citas';
+          listado_imprimir[key_listado] = [];
+              request = new Request(cadena,function(err, rowcount) { if (err) {console.log("Error en el request"+err);} if (rowcount) {
+
+                  }
+                  Base_de_Datos.close();
+                    console.log("Se ha realizado una consulta de citas desde el cliente: "+cliente);
+                    socket.emit('tabla_archivo',Servicio);
+              });//fin del request
+
+              request.on('doneProc',function (rowCount, more, rows) {
+                  Servicio+="</tbody></table> ";
+                  //console.log(Servicio);
+              });
+              request.on('row',function(columns) {
+
+                  var anio=columns[0].value.toString();
+                  var correlativo=columns[1].value.toString();
+                  var ceros=7-correlativo.length;
+                  var c='';
+                  for(var i=0 ; i<ceros;i++)
+                    c+="0";
+                  var unidadn=columns[3].value.toString();
+                  Servicio+="<tbody><tr><td>"+anio+c+correlativo+"</td>"+"<td>"+UNIDADES[unidadn]+"</td></tr></tbody>";
+                  listado_imprimir[key_listado].push({exp:anio+c+correlativo,unidad:UNIDADES[unidadn]});
+              });
+              request.addParameter('empleado',TYPES.VarChar,data.usuario);
+              request.addParameter('fecha',TYPES.VarChar,data.fecha);
+
+              Base_de_Datos.execSql(request);
+
+      }
+    });//fin de connect
+    Base_de_Datos.on('error',function(err) {
+      console.log("se ha llamado a la funcion error :  \n"+err);
+      Base_de_Datos= new Conexion_BD(Configuracion_Base);
+    });
+  });//cierre socket archivo
 
 
 
@@ -132,7 +286,7 @@ socket.on('crear_cita',function(data) {
                   doc.moveDown();
                 doc.fontSize(10).text(data.fecha+"-"+data.hora+"-"+data.nombre_servicio+"-"+data.nombre_unidad+"-"+data.nombre_medico);
                 doc.end()
-                console.log("Crear archivo")
+                console.log("Creacion de cita exitosa desde el cliente: "+cliente)
                 socket.emit('cita_exitosa','/Reportes/C'+cliente+".pdf");
             });//fin del request
 
@@ -169,7 +323,7 @@ socket.on('crear_cita',function(data) {
 
 socket.on('comprobar_cita',function(data) {
   var Base_de_Datos= new Conexion_BD(Configuracion_Base);
-  console.log(data);
+  //console.log(data);
   Base_de_Datos.on('connect', function(err)
   {
     if (err) {console.log(err);}
@@ -183,7 +337,7 @@ socket.on('comprobar_cita',function(data) {
                 }
                 Base_de_Datos.close();
                 socket.emit('cita_posible',status);
-                console.log(status.status);
+
             });//fin del request
 
             request.on('doneProc',function (rowCount, more, rows) {
@@ -192,11 +346,11 @@ socket.on('comprobar_cita',function(data) {
             });
             request.on('row',function(columns) {
                 var id=columns[0].value.toString();
-                console.log("Se ha encontrado un row "+id);
+                //console.log("Se ha encontrado un row "+id);
 
             });
             request.on('returnValue', function(parameterName, value, metadata) {
-              console.log(parameterName + ' = ' + value);
+              //console.log(parameterName + ' = ' + value);
               status.status=value;
             });
 
@@ -272,6 +426,8 @@ socket.on('comprobar_cita',function(data) {
   });//cierre socket on mostrar servicios
 
 
+
+
   socket.on('unidades',function(data) {
     var Base_de_Datos= new Conexion_BD(Configuracion_Base_saho);
     var Servicio='<option  disabled selected>Clinicas</option>';
@@ -303,6 +459,8 @@ socket.on('comprobar_cita',function(data) {
                   var id=columns[0].value.toString();
                   var nombre_clinica=columns[1].value.toString().replace(/clinica de la/gi,'').replace(/clinica del/gi,'').replace(/clinica de/gi,'').replace(/clinica/gi,'');
                   Servicio+="<option value='"+id+"'>"+nombre_clinica+"</option>";
+
+
               });
 
               Base_de_Datos.execSql(request);
@@ -326,10 +484,10 @@ var linea_cliente=0;
     data=data.replace('-','');
     var anio=data.toString().substring(0,4);
     var correlativo=data.toString().substring(4,12);
-    console.log(anio);
+    //console.log(anio);
     var respuesta={};
     var respuestap={};
-    console.log(correlativo);
+    //console.log(correlativo);
     Base_de_Datos.on('connect', function(err)
     {
       if (err) {console.log(err);}
@@ -376,7 +534,7 @@ var linea_cliente=0;
                   var linea=columns[7].value;
                   linea_cliente=linea;
                   respuesta={exp:data,nombre1:nombre1,nombre2:nombre2,apellido1:apellido1,apellido2:apellido2,identificacion:identificacion,linea:linea};
-                  console.log(respuesta);
+                  //console.log(respuesta);
 
               });
 
@@ -437,7 +595,7 @@ var linea_cliente=0;
                   var identificacion=columns[6].value;
                   var linea=columns[7].value;
                   respuestap={exp:data,nombre1:nombre1,nombre2:nombre2,apellido1:apellido1,apellido2:apellido2,identificacion:identificacion,linea:linea};
-                  console.log(respuesta);
+                  //console.log(respuesta);
 
               });
 

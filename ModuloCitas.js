@@ -475,7 +475,7 @@ socket.on('comprobar_cita',function(data) {
               status.statusnombre=UNIDADES[value];
             });
 
-            console.log(data);
+            //console.log(data);
             request.addParameter('anio',TYPES.Int,data.no_expediente.substring(0, 4));
             request.addParameter('correlativo',TYPES.Int,data.no_expediente.substring(4, 11));
             //request.addParameter('fecha',TYPES.Date,data.fecha);

@@ -1,6 +1,7 @@
 
 $(document).ready(function() {
-
+  $('#crear_citas').show(300);
+  $('#busqueda_cita').hide(300);
   var numerocita;//agregar|
   var longitudcita;//agregar|
   ///nuevo menu
@@ -119,14 +120,42 @@ var linea_cliente=0;
 
   $('#area').on('change', function() {
     var datain=$("#area").val();
-    socket.emit('unidades',datain);
+    console.log("area cambio");
+    socket.emit('unidades_auto',datain);
   });
-  $('#clinica').on('change', function() {
+  $('#clinica_u').on('change', function() {
     var unidad=$('#clinica').val();
     var servicio=$('#area').val();
     var dat={unidad:unidad, servicio:servicio};
     socket.emit('medicos',dat);  });
   socket.on('llenar_unidades',function(unid) {
+    //console.log(unid);
+    var d="{}";
+    try {
+      d=JSON.parse(unid);
+    } catch (e) {
+
+    } finally {
+
+    }
+
+    $('#clinicas_u').autocomplete({ //++
+        data: d,
+        limit: 20, // The max amount of results that can be shown at once. Default: Infinity.
+        onAutocomplete: function(val) {
+
+            var unidad=val.toString().substring(0,4);
+            var servicio=$('#area').val();
+            var dat={unidad:unidad, servicio:servicio};
+            console.log("Callback autocomplete");
+            console.log(dat);
+            socket.emit('medicos',dat);
+          // Callback function when value is autcompleted.
+        },
+        minLength: 0, // The minimum length of the input for the autocomplete to start. Default: 1.
+      });
+
+
     var $selectclinicas =$("#clinica").empty().html(' ').append(unid).trigger('contentChanged');
 
   });
@@ -159,6 +188,8 @@ socket.on('mostrar_paciente', (data) => {
   linea_cliente=data.linea;
   $('#tdexpediente').html(data.exp);
   $('#tdidentificacion').html(data.identificacion);
+
+  $('#tdedad').html(data.edad);
   $('#selecciones').show(300);
   $('#busqueda').hide(300);
   $('#divBotonGuardar').show(300);
@@ -204,13 +235,22 @@ socket.on('cita_posible',function(info) {
       'error'
     )
   }
+  else if(info.status==4)
+  {
+    //esta cita ya fue creada
+    swal(
+      'Error',
+      'Se ha alcazado el limite de citas para el dia seleccionado',
+      'error'
+    )
+  }
   else
   {
     //pedir confirmacion de la cita llamar al server para pedir informacion de la clinica en la que ya tiene la cita
     //socket.emit('crear_cita',jsdata);
     swal({
       title: 'Esta seguro que desea crear la cita?',
-      text: "Ya existe una cita en: "+info.jsdata.nombre_servicio+" en la unidad: "+$("#clinica option[value='"+info.status+"']").text(),
+      text: "Ya existe una cita en: "+info.jsdata.nombre_servicio+" en la unidad: "+info.statusnombre,
       type: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -242,26 +282,27 @@ socket.on('cita_exitosa',(data) =>{
   $('#tabla').show(200);
   swal(
     'Cita creada!',
-    'La cita se ha creado con exito.',
+    'La cita se ha creado con exito. En la fecha: '+data.fecha.substring(8,10)+"/"+data.fecha.substring(5,7)+"/"+data.fecha.substring(0,4)+'  Para la clinica: '+data.clinica,
     'success'
   )
   $('#btnNueva').show(300);
   $('#textoNueva').show(300);
 
-    window.open(data);
+    window.open(data.redirect);
 });
 
 
 
-
+var ClinicaSeleccionada=0;
 //inicio de citas
 $("#btnGuardar").click( function()
         {
+          //alert($('#clinicas_u').val().toString().substring(5,70));
             area = $('#area').val();
             medico= $('#medico').val();
             time= $('#horaCita').val();
             date= $('#fechaCita').val();
-            clinica=$('#clinica').val();
+            clinica=$('#clinicas_u').val().toString().substring(0,4);
           if (area=="" || medico=="" || time=="" || date=="" || clinica=="" )
           {
             swal('Debe llenar todos los campos');
@@ -287,8 +328,8 @@ $("#btnGuardar").click( function()
               var jsdata={no_expediente:$('#nexpediente').val(),
               fecha:$('#fechaCita').val(),
               hora:$('#horaCita').val().replace('PM','').replace('AM',''),
-              servicio:$('#area').val(),nombre_servicio:$('#area option:selected').text(),nombre_unidad:$('#clinica option:selected').text(),nombre_medico:$('#medico option:selected').text(),
-              unidad:$('#clinica').val(),linea:linea_cliente,
+              servicio:$('#area').val(),nombre_servicio:$('#area option:selected').text(),nombre_unidad:$('#clinicas_u').val().toString().substring(5,70),nombre_medico:$('#medico option:selected').text(),
+              unidad:$('#clinicas_u').val().toString().substring(0,4),linea:linea_cliente,
               id_doctor:$('#medico').val()};
 
               console.log(jsdata);

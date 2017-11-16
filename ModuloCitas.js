@@ -75,6 +75,17 @@ console.log("Server Iniciado correctamente");
 
 io.sockets.on('connection',function(socket) {
 
+//para que funcione el reverse proxy de nginx
+var cliente=socket.request.connection.remoteAddress;
+if(socket.request.connection.remoteAddress.toString()=="::ffff:127.0.0.1")
+  cliente=socket.handshake.headers['x-forwarded-for'];
+else cliente=socket.request.connection.remoteAddress.substring(7, 19);
+
+    console.log("Conexion desde cliente: "+cliente);
+
+
+
+
   socket.on('prueba',function(data) {
     var Base_de_Datos= new Conexion_BD(Configuracion_Base);
     Base_de_Datos.on('connect', function(err)
@@ -119,13 +130,19 @@ var listado_imprimir={}
 var key_listado = 'Citas';
 listado_imprimir[key_listado] = [];
 socket.on('imprimir_listado_archivo',function(data) {
+  var currentdate = new Date();
+  var datetime = "" + currentdate.getDate() + "/"+ (currentdate.getMonth()+1)  + "/"+ currentdate.getFullYear() + "";
+  var fecha_impresion=datetime;
+  var hora_impresion = ""+ currentdate.getHours() + ":"+ currentdate.getMinutes() + ":" + currentdate.getSeconds();
   PDFDocument = require('pdfkit');
-  doc = new PDFDocument
+  doc = new PDFDocument({size:'legal'});
   fs = require('fs');
   doc.pipe(fs.createWriteStream('html/Reportes/Listado_'+cliente+".pdf"));
 
   doc.image(__dirname+'/html/img/lh.png', 50, 20, {width: 100});
-  doc.moveUp();doc.moveUp();doc.moveUp();
+  doc.fontSize(6).text("  Fecha de impresion:"+fecha_impresion,{align: 'right'});
+  doc.fontSize(6).text("  Hora de impresion:"+hora_impresion,{align: 'right'});
+  doc.moveUp(6);
   doc.fontSize(14).font('Times-Roman').fillColor('#005B99').text("                       Hospital General San Juan de Dios");
   doc.fontSize(14).text("                       Sistema de Gestion Hospitalaria");
   doc.fontSize(14).text("                       Registros medicos");
@@ -264,7 +281,7 @@ doc.moveDown();
   });//cierre socket on mostrar doctores
 
 
-var cliente=socket.request.connection.remoteAddress.substring(7, 19);
+
 socket.on('crear_cita',function(data) {
   PDFDocument = require('pdfkit');
   doc = new PDFDocument
@@ -295,7 +312,7 @@ socket.on('crear_cita',function(data) {
 
                       var cadena ="exec sp_cita_ingreso @anio, @correlativo, @servicio, @unidad, @fecha, @linea, @ip, @id_doctor, @hora,0";
 
-                          request = new Request(cadena,function(err, rowcount) { if (err) {console.log("Error en el request"+err);} if (rowcount) {
+                          request = new Request(cadena,function(err, rowcount) { if (err) {console.log("Error en el request de crear cita "+err);} if (rowcount) {
 
                               }
                               Base_de_Datos.close();
@@ -305,7 +322,10 @@ socket.on('crear_cita',function(data) {
                               doc.fontSize(8).text(data.fecha+"-"+data.hora+"-"+data.nombre_servicio+"-"+data.nombre_unidad+"-"+data.nombre_medico);
                               doc.end()
                               console.log("Creacion de cita exitosa desde el cliente: "+cliente)
-                              socket.emit('cita_exitosa',"http://"+Configuracion_Servidor.ip+":"+Configuracion_Servidor.puerto+'/Reportes/C'+cliente+".pdf");
+                              console.log(UNIDADES[data.unidad]);
+                              console.log(data.unidad);
+                              var dare={redirect:"http://"+Configuracion_Servidor.ip+":"+Configuracion_Servidor.puerto+'/Reportes/C'+cliente+".pdf",fecha:data.fecha,clinica:UNIDADES[data.unidad]}
+                              socket.emit('cita_exitosa',dare);
 
                           });//fin del request
 
@@ -452,9 +472,10 @@ socket.on('comprobar_cita',function(data) {
             request.on('returnValue', function(parameterName, value, metadata) {
               //console.log(parameterName + ' = ' + value);
               status.status=value;
+              status.statusnombre=UNIDADES[value];
             });
 
-
+            console.log(data);
             request.addParameter('anio',TYPES.Int,data.no_expediente.substring(0, 4));
             request.addParameter('correlativo',TYPES.Int,data.no_expediente.substring(4, 11));
             //request.addParameter('fecha',TYPES.Date,data.fecha);
@@ -526,6 +547,52 @@ socket.on('comprobar_cita',function(data) {
   });//cierre socket on mostrar servicios
 
 
+
+  socket.on('unidades_auto',function(data) {
+    var Base_de_Datos= new Conexion_BD(Configuracion_Base_saho);
+    var Servicio='{';
+    //console.log(data);
+    Base_de_Datos.on('connect', function(err)
+    {
+      if (err) {console.log(err);}
+      else
+      {
+          //console.log("Exito al conectar");
+
+          var cadena ="sp_servicio_tipo_unidad @numero";
+
+              request = new Request(cadena,function(err, rowcount) { if (err) {console.log("Error en el request"+err);} if (rowcount) {
+
+                  }
+                  //console.log(rowcount);
+                  Base_de_Datos.close();
+                    //console.log("Se han llenado unidaddes auto ");
+                    //console.log(Servicio);
+                    socket.emit('llenar_unidades',Servicio);
+              });//fin del request
+              request.addParameter('numero',TYPES.Int,data);
+
+              request.on('doneProc',function (rowCount, more, rows) {
+                  Servicio+='"aaa":"00"}'
+                  //console.log("El procedimiento ha terminado ");
+              });
+              request.on('row',function(columns) {
+                  var id=columns[0].value.toString();
+                  var nombre_clinica=columns[1].value.toString().replace(/clinica de la/gi,'').replace(/clinica del/gi,'').replace(/clinica de/gi,'').replace(/clinica/gi,'');
+                  Servicio+='"'+id+"-"+nombre_clinica+"\":\"\",";
+
+
+              });
+
+              Base_de_Datos.execSql(request);
+
+      }
+    });//fin de connect
+    Base_de_Datos.on('error',function(err) {
+      console.log("se ha llamado a la funcion error :  \n"+err);
+      Base_de_Datos= new Conexion_BD(Configuracion_Base);
+    });
+  });//cierre socket on mostrar servicios
 
 
   socket.on('unidades',function(data) {
@@ -632,8 +699,9 @@ var linea_cliente=0;
                   var nombre2=columns[3].value;
                   var identificacion=columns[6].value;
                   var linea=columns[7].value;
+                  var edad=columns[8].value;
                   linea_cliente=linea;
-                  respuesta={exp:data,nombre1:nombre1,nombre2:nombre2,apellido1:apellido1,apellido2:apellido2,identificacion:identificacion,linea:linea};
+                  respuesta={exp:data,nombre1:nombre1,nombre2:nombre2,apellido1:apellido1,apellido2:apellido2,identificacion:identificacion,linea:linea,edad:edad};
                   //console.log(respuesta);
 
               });
@@ -694,7 +762,8 @@ var linea_cliente=0;
                   var nombre2=columns[3].value;
                   var identificacion=columns[6].value;
                   var linea=columns[7].value;
-                  respuestap={exp:data,nombre1:nombre1,nombre2:nombre2,apellido1:apellido1,apellido2:apellido2,identificacion:identificacion,linea:linea};
+                  var edad=columns[8].value;
+                  respuestap={exp:data,nombre1:nombre1,nombre2:nombre2,apellido1:apellido1,apellido2:apellido2,identificacion:identificacion,linea:linea,edad:edad};
                   //console.log(respuesta);
 
               });

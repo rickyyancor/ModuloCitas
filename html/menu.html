@@ -34,7 +34,7 @@
            <ul id="slide-out" class="side-nav side-nav fixed collapsible" data-collapsible="accordion">
                <li><div class="user-view">
                 <a href="#!user"><img style="text-align:center;"src="img/lh.png"></a>
-                <p style="text-align:center;color:#01579b;">SIGESHOP</p>
+                <p style="text-align:center;color:#01579b;">SGH</p>
                </div></li>
                <li><div class="divider"></div></li>
                 <li>
@@ -85,6 +85,7 @@
                    <thead>
                      <tr>
                          <th>Nombre del paciente</th>
+                         <th>Edad</th>
                          <th>No. de expediente</th>
                          <th>Documento de identificacion</th>
                      </tr>
@@ -92,6 +93,7 @@
                   <tbody>
                      <tr>
                        <td><p id='tdnombre'/></td>
+                       <td><p id='tdedad'/></td>
                        <td><p id='tdexpediente'/></td>
                        <td><p id='tdidentificacion'/></td>
                      </tr>
@@ -106,12 +108,10 @@
                    <option disabled selected>Areas</option>
                  </select>
                </div>
-               <div class="input-field col s6">
-                 <p class="flow-text">Seleccione una clinica: </p>
-             <select id="clinica">
-
-             </select>
-             </div>
+               <div class="input-field col s5">
+                <p class="flow-text">Ingrese la clinica: </p>
+            <input type="text" id="clinicas_u" class="autocomplete">
+          </div>
              <div class="input-field col s6">
                <p class="flow-text">Seleccione un medico: </p>
              <select id="medico">

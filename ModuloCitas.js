@@ -321,9 +321,9 @@ socket.on('crear_cita',function(data) {
                                 doc.moveDown();doc.moveDown();doc.moveDown();
                               doc.fontSize(8).text(data.fecha+"-"+data.hora+"-"+data.nombre_servicio+"-"+data.nombre_unidad+"-"+data.nombre_medico);
                               doc.end()
-                              console.log("Creacion de cita exitosa desde el cliente: "+cliente)
-                              console.log(UNIDADES[data.unidad]);
-                              console.log(data.unidad);
+                              //console.log("Creacion de cita exitosa desde el cliente: "+cliente)
+                              //console.log(UNIDADES[data.unidad]);
+                              //console.log(data.unidad);
                               var dare={redirect:"http://"+Configuracion_Servidor.ip+":"+Configuracion_Servidor.puerto+'/Reportes/C'+cliente+".pdf",fecha:data.fecha,clinica:UNIDADES[data.unidad]}
                               socket.emit('cita_exitosa',dare);
 

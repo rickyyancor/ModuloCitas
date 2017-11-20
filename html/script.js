@@ -167,9 +167,50 @@ var linea_cliente=0;
 });//end on llenar servicios
 
 socket.on('llenar_tabla_citas_exp',function (data) {
-  console.log(data);
+  //console.log(data);
   $('#paratablacitas_exp').html(data);
+  $(".boton_imprimir_cita").click(function() {
+    var valores="";
+    var registro=$(this).parents("tr").find("td");
+    var cont=0;
+    $(this).parents("tr").find("td").each(function(){
+      if(cont<4){
+        valores+=$(this).html()+"*";cont++;
+      }
+    });
 
+    swal({
+      title: 'Ingrese el numero de linea',
+      input: 'number',
+      showCancelButton: true,
+      confirmButtonText: 'OK',
+      showLoaderOnConfirm: true,
+      preConfirm: function (data) {
+        console.log(data)
+        return new Promise(function (resolve, reject) {
+          var dat={};
+          dat.txt=valores;
+          dat.linea=data;
+          socket.emit('reimpresion_cita',dat);
+          resolve();
+
+        })
+      },
+      allowOutsideClick: false
+    }).then(function (resolve) {
+      
+
+    },function (reject) {
+
+    }
+  )
+
+
+
+
+
+
+  })
 });
 
 
@@ -287,11 +328,15 @@ socket.on('cita_exitosa',(data) =>{
   )
   $('#btnNueva').show(300);
   $('#textoNueva').show(300);
-
-    window.open(data.redirect);
+  document.getElementById('download_txt').href=data.redirect;
+  document.getElementById('download_txt').click();
+    //window.open(data.redirect, "_blank");
 });
 
-
+socket.on('reimpresion_cita_exitosa',function(data) {
+  document.getElementById('download_txt').href=data.redirect;
+  document.getElementById('download_txt').click();
+});
 
 var ClinicaSeleccionada=0;
 //inicio de citas

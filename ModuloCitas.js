@@ -23,7 +23,49 @@ res.send(Configuracion_Base);
 require('console-stamp')(console, '[HH:MM:ss]');
 
 var UNIDADES=[];
+var MEDICOS=[];
+function cargar_nombre_medicos(serv,uni)
+{
+  var Base_de_Datos= new Conexion_BD(Configuracion_Base_saho);
+  var Servicio='<option  disabled selected>Clinicas</option>';
+  //console.log(data);
+  Base_de_Datos.on('connect', function(err)
+  {
+    if (err) {console.log(err);}
+    else
+    {
+        //console.log("Exito al conectar");
 
+        var cadena ="sp_doctores_clinica @servicio , @unidad";
+
+            request = new Request(cadena,function(err, rowcount) { if (err) {console.log("Error en el request"+err);} if (rowcount) {
+
+                }
+                Base_de_Datos.close();
+            });//fin del request
+
+            request.on('doneProc',function (rowCount, more, rows) {
+                Servicio+=""
+                //console.log("El procedimiento ha terminado ");
+            });
+            request.on('row',function(columns) {
+                var id=columns[0].value.toString();
+                var nombre_medico=columns[1].value.toString()+" "+columns[2].value.toString()+" "+columns[3].value.toString()+" "+columns[4].value.toString();
+                MEDICOS[id]=nombre_medico;
+                //console.log(MEDICOS[id]);
+            });
+            request.addParameter('servicio',TYPES.VarChar,serv);
+            request.addParameter('unidad',TYPES.VarChar,uni);
+
+            Base_de_Datos.execSql(request);
+
+    }
+  });//fin de connect
+  Base_de_Datos.on('error',function(err) {
+    console.log("se ha llamado a la funcion error :  \n"+err);
+    Base_de_Datos= new Conexion_BD(Configuracion_Base);
+  });
+}
 function cargar_nombre_unidades(data,per)
 {
   var Base_de_Datos= new Conexion_BD(Configuracion_Base_saho);
@@ -55,6 +97,7 @@ function cargar_nombre_unidades(data,per)
               var nombre_clinica=columns[1].value.toString().replace(/clinica de la/gi,'').replace(/clinica del/gi,'').replace(/clinica de/gi,'').replace(/clinica/gi,'');;
 
                 UNIDADES[id]=per+"  "+nombre_clinica;
+                cargar_nombre_medicos(data,id);
                 //console.log(UNIDADES[id]);
             });
 
@@ -73,16 +116,34 @@ cargar_nombre_unidades(1304,"Pediatria");
 cargar_nombre_unidades(1305,"Gineco-Obstetricia");
 console.log("Server Iniciado correctamente");
 
+
+
+
+
+
 io.sockets.on('connection',function(socket) {
 
 //para que funcione el reverse proxy de nginx
 var cliente=socket.request.connection.remoteAddress;
-if(socket.request.connection.remoteAddress.toString()=="::ffff:127.0.0.1")
+if(socket.request.connection.remoteAddress.toString()=="::ffff:127.0.0.1"||socket.request.connection.remoteAddress.toString()==Configuracion_Servidor.ip)
   cliente=socket.handshake.headers['x-forwarded-for'];
 else cliente=socket.request.connection.remoteAddress.substring(7, 19);
 
     console.log("Conexion desde cliente: "+cliente);
 
+
+socket.on('reimpresion_cita',function(data) {
+  var fs = require('fs');
+  var espacios="";
+  for(var i=0;i<data.linea;i++) espacios+="\n";
+  fs.writeFile('html/Reportes/C'+cliente+".txt",espacios+data.linea+"  "+ data.txt, function (err) {
+    if (err) console.log("Error creando archivo de citas"+err);
+    console.log('Archivo de citas creado para impresion');
+  });
+console.log(data);
+var dare={redirect:"http://"+Configuracion_Servidor.ip+":"+Configuracion_Servidor.puerto+'/Reportes/C'+cliente+".txt"}
+socket.emit('reimpresion_cita_exitosa',dare);
+});
 
 
 
@@ -316,15 +377,22 @@ socket.on('crear_cita',function(data) {
 
                               }
                               Base_de_Datos.close();
-                              doc.text(".",30,1)
-                              for(var i=0;i<data.linea;i++)
-                                doc.moveDown();doc.moveDown();doc.moveDown();
-                              doc.fontSize(8).text(data.fecha+"-"+data.hora+"-"+data.nombre_servicio+"-"+data.nombre_unidad+"-"+data.nombre_medico);
-                              doc.end()
+                              var fs = require('fs');
+                              var espacios="";
+                              for(var i=0;i<data.linea;i++) espacios+="\n";
+                              fs.writeFile('html/Reportes/C'+cliente+".txt",espacios+data.linea+"  "+ data.fecha+"-"+data.hora+"-"+data.nombre_servicio+"-"+data.nombre_unidad+"-"+data.nombre_medico, function (err) {
+                                if (err) console.log("Error creando archivo de citas"+err);
+                                console.log('Archivo de citas creado para impresion');
+                              });
+                              //doc.text(".",30,1)
+                              //for(var i=0;i<data.linea;i++)
+                              //  doc.moveDown();doc.moveDown();doc.moveDown();
+                              //doc.fontSize(8).text(data.fecha+"-"+data.hora+"-"+data.nombre_servicio+"-"+data.nombre_unidad+"-"+data.nombre_medico);
+                              //doc.end()
                               //console.log("Creacion de cita exitosa desde el cliente: "+cliente)
                               //console.log(UNIDADES[data.unidad]);
                               //console.log(data.unidad);
-                              var dare={redirect:"http://"+Configuracion_Servidor.ip+":"+Configuracion_Servidor.puerto+'/Reportes/C'+cliente+".pdf",fecha:data.fecha,clinica:UNIDADES[data.unidad]}
+                              var dare={redirect:"http://"+Configuracion_Servidor.ip+":"+Configuracion_Servidor.puerto+'/Reportes/C'+cliente+".txt",fecha:data.fecha,clinica:UNIDADES[data.unidad]}
                               socket.emit('cita_exitosa',dare);
 
                           });//fin del request
@@ -392,7 +460,7 @@ socket.on('crear_cita',function(data) {
 
 socket.on('buscar_cita_expediente',function(data) {
   var Base_de_Datos= new Conexion_BD(Configuracion_Base);
-  var Servicio='<table class="striped centered"><thead><tr><th>Fecha</th><th>Hora</th><th>Clinica</th></tr></thead><tbody>';
+  var Servicio='<table class="striped centered"><thead><tr><th>Fecha</th><th>Hora</th><th>Clinica</th><th>Medico</th><th>IMP</th></tr></thead><tbody>';
 
   Base_de_Datos.on('connect', function(err)
   {
@@ -420,7 +488,8 @@ socket.on('buscar_cita_expediente',function(data) {
                 var Cfecha=columns[0].value.toString();
                 var Chora=columns[1].value.toString();
                 var unidadn=columns[2].value.toString();
-                Servicio+="<tbody><tr><td>"+Cfecha+"</td><td>"+Chora+"</td><td>"+UNIDADES[unidadn]+"</td></tr></tbody>";
+                var medidn=columns[3].value.toString();
+                Servicio+="<tbody><tr><td>"+Cfecha+"</td><td>"+Chora+"</td><td>"+UNIDADES[unidadn]+"</td><td>"+MEDICOS[medidn]+"</td><td class=\"boton_imprimir_cita\"><img src=\"/img/impresora.png\" alt=\"Imprimir\" width=\"50px\" height=\"50px\"/></td></tr></tbody>";
 
             });
             request.addParameter('anio',TYPES.Int,data.no_expediente.substring(0, 4));

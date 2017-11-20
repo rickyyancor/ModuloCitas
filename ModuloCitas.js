@@ -138,9 +138,9 @@ socket.on('reimpresion_cita',function(data) {
   for(var i=0;i<data.linea;i++) espacios+="\n";
   fs.writeFile('html/Reportes/C'+cliente+".txt",espacios+data.linea+"  "+ data.txt, function (err) {
     if (err) console.log("Error creando archivo de citas"+err);
-    console.log('Archivo de citas creado para impresion');
+    //console.log('Archivo de citas creado para impresion');
   });
-console.log(data);
+//console.log(data);
 var dare={redirect:"http://"+Configuracion_Servidor.ip+":"+Configuracion_Servidor.puerto+'/Reportes/C'+cliente+".txt"}
 socket.emit('reimpresion_cita_exitosa',dare);
 });

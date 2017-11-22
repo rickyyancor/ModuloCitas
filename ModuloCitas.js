@@ -16,9 +16,7 @@ var TYPES = require('tedious').TYPES;
 var Conexion_BD = require('tedious').Connection;
 app.use('/', express.static(__dirname + '/html/'));
 //Rutas
-app.get('/', function (req, res) {
-res.send(Configuracion_Base);
-});
+
 
 require('console-stamp')(console, '[HH:MM:ss]');
 
@@ -119,8 +117,6 @@ console.log("Server Iniciado correctamente");
 
 
 
-
-
 io.sockets.on('connection',function(socket) {
 
 //para que funcione el reverse proxy de nginx
@@ -130,6 +126,46 @@ if(socket.request.connection.remoteAddress.toString()=="::ffff:127.0.0.1"||socke
 else cliente=socket.request.connection.remoteAddress.substring(7, 19);
 
     console.log("Conexion desde cliente: "+cliente);
+
+
+socket.on('imprimir_stricker', function imprimir_stricker(data) {
+  const bwipjs = require('bwip-js');
+
+  bwipjs.toBuffer({
+          bcid:        'code128',       // Barcode type
+          text:        data.expediente,    // Text to encode
+          scale:       3,               // 3x scaling factor
+          height:      10,              // Bar height, in millimeters
+          includetext: true,            // Show human-readable text
+          textxalign:  'center',        // Always good to set this
+        },
+        function (err, png) {
+            if (err) {
+              // Decide how to handle the error
+              // `err` may be a string or Error object
+              console.log(err);
+            }
+            else {
+              require("fs").writeFile("html/Reportes/s_"+data.expediente+".png", png, 'base64', function(err) {
+                if(err){}
+                else{
+                  var dare={redirect:"http://"+Configuracion_Servidor.ip+":"+Configuracion_Servidor.puerto+'/Reportes/s_'+data.expediente+".pdf"};
+                  PDFDocument = require('pdfkit');
+                  doc = new PDFDocument();
+                  fs = require('fs');
+                  doc.pipe(fs.createWriteStream('html/Reportes/s_'+data.expediente+".pdf"));
+                  doc.image(__dirname+'/html/Reportes/s_'+data.expediente+'.png', 400, 55, {width: 100});
+                  doc.fontSize(14).text("      Nombre Paciente: ");
+                  doc.text("      "+data.nombre);
+                  doc.end();
+                  socket.emit('impresion_sticker_exitosa',dare);
+                }
+            });
+
+            }
+          });
+
+});
 
 
 socket.on('reimpresion_cita',function(data) {

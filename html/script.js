@@ -38,7 +38,12 @@ $('.button-collapse').sideNav({
   $('#btnNueva').click(function(){
           location.reload();
     })
+    $('#btn_imprimir_sticker').click(function(){
+          var data_sticker={expediente:$("#tdexpediente").html(),nombre:$("#tdnombre").html()};
+          socket.emit('imprimir_stricker',data_sticker);
 
+
+      })
   $('#link_buscar_cita').click(function(){  //agregar |
 
         $('#busqueda_cita').show(300);
@@ -98,6 +103,12 @@ $('.button-collapse').sideNav({
 
 
 var socket=io();
+socket.on('impresion_sticker_exitosa',function(data) {
+  console.log("Exito");
+  window.open(data.redirect);
+  location.reload();
+
+});
 $('select').material_select();
 $('select').on('contentChanged', function() {
   // re-initialize (update)
@@ -198,7 +209,7 @@ socket.on('llenar_tabla_citas_exp',function (data) {
       },
       allowOutsideClick: false
     }).then(function (resolve) {
-      
+
 
     },function (reject) {
 

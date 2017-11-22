@@ -21,7 +21,7 @@
     <header>
           <nav>
         <div class="nav-wrapper  blue darken-1">
-          <a href="#" class="brand-logo center">Citas</a>
+          <a href="#" class="brand-logo center">Stickers</a>
         </div>
         </nav>
         </header>
@@ -38,20 +38,13 @@
                </div></li>
                <li><div class="divider"></div></li>
                 <li>
-                  <div class="collapsible-header"><span class="blue-text name">Citas</span></div>
+                  <div class="collapsible-header"><span class="blue-text name">Admision</span></div>
                   <div class="collapsible-body ">
-                 <a id="link_crear_cita" href="#!"><p style="text-align:center;color:gray;">Crear cita</p></a>
-                 <a id="link_buscar_cita" href="#!"><p style="text-align:center;color:gray;">Buscar cita</p></a>
+                 <a id="link_crear_cita" href="#!"><p style="text-align:center;color:gray;">Imprimir stickers</p></a>
                </div>
                </li>
                <li>
-                 <div class="collapsible-header"><span class="blue-text name">Admisiones</span></div>
-                 <div class="collapsible-body ">
-                <a id="link_crear_cita" href="#!"><p style="text-align:center;color:gray;">Hoja de ingresos</p></a>
-                <a id="link_buscar_cita" href="#!"><p style="text-align:center;color:gray;">Hoja de urgencia</p></a>
-                <a id="link_impresion_stickers" href="#!"><p style="text-align:center;color:gray;">Impresion Stickers</p></a>
 
-              </div>
               </li>
              </ul>
              <a id="icono" href="#" data-activates="slide-out" class="button-collapse"><img  src="img/lh.png"></a>
@@ -64,7 +57,7 @@
             <!--INICIA CONTAINER----->
               <div class="row">
                 <br><br>
-                 <h2  id="titulo" class=" blue-text text-darken-2">CITAS: </h2>
+                 <h2  id="titulo" class=" blue-text text-darken-2">Impresion stickers: </h2>
                   <br>
               </div><!--fin del row------>
               <div id="busqueda"class="row "><!--inicia row------>
@@ -103,83 +96,18 @@
                  </table>
                </div>
 
-             <div id="selecciones" class="row "><!--inicia row------>
-               <div class="input-field col s6">
-                 <p class="flow-text">Seleccione el área: </p>
-                 <select id ="area">
-                   <option disabled selected>Areas</option>
-                 </select>
-               </div>
-               <div class="input-field col s5">
-                <p class="flow-text">Ingrese la clinica: </p>
-            <input type="text" id="clinicas_u" class="autocomplete">
-          </div>
-             <div class="input-field col s6">
-               <p class="flow-text">Seleccione un medico: </p>
-             <select id="medico">
-             <option disabled selected>Medicos</option>
-             </select>
-         </div>
-         <div class="input-field col s6">
-           <p class="flow-text">Fecha de la cita: </p>
-         <input type="text" id="fechaCita">
-         </div>
-         <div class="input-field col s6">
-           <p class="flow-text">Hora de la cita: </p>
-         <input type="text" id="horaCita"  >
-         </div>
 
-              </div><!--fin row busqueda--->
               <div id="divBotonGuardar" class="row"><!--nuevo row----->
                 <div class="col s6"><!--boton--------->
-                  <a id="btnGuardar" class="waves-effect waves-light btn-large">Guardar</a>
+                  <a id="btn_imprimir_sticker" class="waves-effect waves-light btn-large">Imprimir</a>
                </div><!--fin boton--->
              </div><!--fin nuevorow--->
 
-              <div id="divBotonGuardar" class="row"><!--row nueva cita----->
-                <div class="col s4"><!--boton--------->
-
-               </div><!--fin boton--->
-               <div class="col s4"><!--boton--------->
-                 <p id="textoNueva" style="text-align:left; display:none;" class="flow-text">Crear una nueva cita</p>
-                 <a id="btnNueva" class="waves-effect waves-light btn-large">Nueva cita</a>
-              </div><!--fin boton--->
-              <div class="col s4"><!--boton--------->
-
-             </div><!--fin boton--->
-
-          </div><!--fin row nueva cita--->
-          <!--fin container------>
 
         </div><!--FIN DIV CREAR CITAS--------->
 
 
-        <!--INICIA DIV PARA BUSQUEDA DE CITAS----------->
-          <div id="busqueda_cita" style="display:none;">
-            <div class="row">
-              <br><br>
-              <h2  id="titulo_busqueda" class=" blue-text text-darken-2">Busqueda: </h2>
-              <br>
-            </div><!--fin del row del titulo------>
-            <div id="busqueda_citas"class="row "><!--inicia row------>
-              <p class="flow-text">Ingrese número de carné del paciente </p>
-              <div class="col col s12 m6 l3">
 
-                <div class="input-field ">
-                         <input id="nexpediente_busqueda" type="text" class="validate">
-                         <label for="nexpediente_busqueda">Número de carné: </label>
-               </div>
-
-             </div><!--Cuadricula 1--->
-
-             <div class="col s6"><!--boton--------->
-                       <a id="btnBuscarcita" class="waves-effect waves-light btn-large">Buscar</a>
-            </div><!--fin boton--->
-          </div><!--fin row------>
-
-          <div id="tabla_citas" class="row" style="display:none;"><!--row de la tabla---->
-            <p id="paratablacitas_exp">
-            </div><!--fin row cita------->
 
          </div><!--FIN DIV DE BUSQUEDA DE CITAS-------->
 

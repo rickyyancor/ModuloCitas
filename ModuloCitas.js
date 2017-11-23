@@ -154,17 +154,18 @@ socket.on('imprimir_stricker', function imprimir_stricker(data) {
                   fs = require('fs');
                   doc.pipe(fs.createWriteStream('html/Reportes/s_'+data.expediente+".pdf"));
                   doc.image(__dirname+'/html/Reportes/s_'+data.expediente+'.png', 625, 245, {width: 100});
-                  doc.moveDown(12)
+                  doc.moveDown(11)
+                  doc.fontSize(20).text("                                                                                             "+data.expediente)
                   doc.fontSize(14).text("                                                      Nombre Paciente: ");
                   doc.text("                                                      "+data.nombre);
-                  doc.fontSize(16).text("                                                                                                 "+data.expediente)
                   if(data.cantidad==2)
                   {
-                    doc.moveDown(4)
+                    doc.moveDown(3)
+
+                    doc.fontSize(20).text("                                                                                             "+data.expediente)
                     doc.image(__dirname+'/html/Reportes/s_'+data.expediente+'.png', 625, 365, {width: 100});
                     doc.fontSize(14).text("                                                      Nombre Paciente: ");
                     doc.text("                                                      "+data.nombre);
-                    doc.fontSize(16).text("                                                                                                  "+data.expediente)
 
                   }
                   doc.end();

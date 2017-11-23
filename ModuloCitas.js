@@ -116,7 +116,6 @@ console.log("Server Iniciado correctamente");
 
 
 
-
 io.sockets.on('connection',function(socket) {
 
 //para que funcione el reverse proxy de nginx
@@ -151,12 +150,20 @@ socket.on('imprimir_stricker', function imprimir_stricker(data) {
                 else{
                   var dare={redirect:"http://"+Configuracion_Servidor.ip+":"+Configuracion_Servidor.puerto+'/Reportes/s_'+data.expediente+".pdf"};
                   PDFDocument = require('pdfkit');
-                  doc = new PDFDocument();
+                  doc = new PDFDocument({layout : 'landscape'});
                   fs = require('fs');
                   doc.pipe(fs.createWriteStream('html/Reportes/s_'+data.expediente+".pdf"));
-                  doc.image(__dirname+'/html/Reportes/s_'+data.expediente+'.png', 400, 55, {width: 100});
-                  doc.fontSize(14).text("      Nombre Paciente: ");
-                  doc.text("      "+data.nombre);
+                  doc.image(__dirname+'/html/Reportes/s_'+data.expediente+'.png', 625, 245, {width: 100});
+                  doc.moveDown(13)
+                  doc.fontSize(14).text("                                                      Nombre Paciente: ");
+                  doc.text("                                                      "+data.nombre);
+                  if(data.cantidad==2)
+                  {
+                    doc.moveDown(5)
+                    doc.image(__dirname+'/html/Reportes/s_'+data.expediente+'.png', 625, 365, {width: 100});
+                    doc.fontSize(14).text("                                                      Nombre Paciente: ");
+                    doc.text("                                                      "+data.nombre);
+                  }
                   doc.end();
                   socket.emit('impresion_sticker_exitosa',dare);
                 }
@@ -409,7 +416,8 @@ socket.on('crear_cita',function(data) {
 
                       var cadena ="exec sp_cita_ingreso @anio, @correlativo, @servicio, @unidad, @fecha, @linea, @ip, @id_doctor, @hora,0";
 
-                          request = new Request(cadena,function(err, rowcount) { if (err) {console.log("Error en el request de crear cita "+err);} if (rowcount) {
+                          request = new Request(cadena,function(err, rowcount) { if (err) {console.log("Error en el request de crear cita "+err);
+                        console.log(data);} if (rowcount) {
 
                               }
                               Base_de_Datos.close();

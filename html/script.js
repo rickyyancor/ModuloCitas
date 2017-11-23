@@ -39,11 +39,17 @@ $('.button-collapse').sideNav({
           location.reload();
     })
     $('#btn_imprimir_sticker').click(function(){
-          var data_sticker={expediente:$("#tdexpediente").html(),nombre:$("#tdnombre").html()};
+          var data_sticker={expediente:$("#tdexpediente").html(),nombre:$("#tdnombre").html(),cantidad:1};
           socket.emit('imprimir_stricker',data_sticker);
 
 
       })
+      $('#btn_imprimir_sticker2').click(function(){
+            var data_sticker={expediente:$("#tdexpediente").html(),nombre:$("#tdnombre").html(),cantidad:2};
+            socket.emit('imprimir_stricker',data_sticker);
+
+
+        })
   $('#link_buscar_cita').click(function(){  //agregar |
 
         $('#busqueda_cita').show(300);

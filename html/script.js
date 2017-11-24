@@ -362,10 +362,11 @@ $("#btnGuardar").click( function()
           //alert($('#clinicas_u').val().toString().substring(5,70));
             area = $('#area').val();
             medico= $('#medico').val();
+            console.log(medico);
             time= $('#horaCita').val();
             date= $('#fechaCita').val();
             clinica=$('#clinicas_u').val().toString().substring(0,4);
-          if (area=="" || medico=="" || time=="" || date=="" || clinica=="" )
+          if (area==null ||area=="" || medico==""|| medico==null || time=="" || date=="" || clinica=="" )
           {
             swal('Debe llenar todos los campos');
           }

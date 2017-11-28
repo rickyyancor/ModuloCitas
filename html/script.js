@@ -1,5 +1,7 @@
 
 $(document).ready(function() {
+  var fechaminimacitas = new Date();
+  fechaminimacitas.setDate(fechaminimacitas.getDate() + 4);
   $('#crear_citas').show(300);
   $('#busqueda_cita').hide(300);
   var numerocita;//agregar|
@@ -16,6 +18,8 @@ $(document).ready(function() {
                 $('#selecciones').addClass('col s10')
             }else{
                     console.log('No pasa nad papu')
+
+                    console.log(fechaminimacitas);
             }
 
 $('.collapsible').collapsible();
@@ -89,7 +93,7 @@ $('.button-collapse').sideNav({
      format:'yyyy-mm-dd',
      selectYears: true,
      selectMonths: true,
-     min:new Date(),
+     min:fechaminimacitas,
      disable: [1, 7],
      today: 'Hoy',
      clear: 'Limpiar',

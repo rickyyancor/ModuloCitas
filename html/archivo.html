@@ -45,6 +45,7 @@
                   <div class="collapsible-header"><span class="blue-text name">Archivos</span></div>
                   <div class="collapsible-body ">
                  <a id="link_registros" href="#!"><p  style="text-align:center;color:gray;">Consultar citas</p></a>
+                 <a id="link_extras" href="#!"><p  style="text-align:center;color:gray;">Consultar Extras</p></a>
 
                </div>
                </li>
@@ -111,6 +112,49 @@
                     </div>
 
               </div><!--div con todo--------->
+              <div id="div_extras" style="display:none;">
+                   <div class="row" id="titulo1">
+                    <h1 class="thin text-blue darken-1">Consulta citas extras</h1>
+                    </div><!--Cuadricula 1--->
+                    <div class="row" id="seleccion">
+                      <div class="input-field col s6">
+                        <p class="flow-text">Fecha a consultar: </p>
+                      <input type="text" id="fecha_extras">
+                    </div>
+                    <div class="input-field col s6">
+                      <p class="flow-text">Seleccione la unidad: </p>
+                      <select id="area" >
+                      <option   disabled selected>Usuarios</option>
+
+                      </select>
+                    </div>
+                    <div class="col s6 "><!--boton--------->
+                              <a id="btnBuscarExtras" class="waves-effect waves-light btn-large">Buscar</a>
+                   </div><!--fin boton--->
+                    </div>
+                    <div  style="display:none;" id="tabla_extras" class="col s12 ">
+                      <p id="paratablaexp_extras">
+
+                     <br>
+                       </div>
+                       <div id="recargar_extras" class="row" style="display:none";>
+                         <div class="col s4">
+
+                         </div>
+                         <div class="col s4">
+                           <a id="btnrefrescar_extras" class="waves-effect waves-light btn-large">Nueva busqueda</a>
+                           <br><br>
+                           <a id="btnimprimir_extras" class="waves-effect waves-light btn-large">Imprimir</a>
+
+                         </div>
+
+
+                         <div class="col s4">
+
+                         </div>
+                       </div>
+
+                 </div><!--div con todo--------->
        </div><!--FIN GRID DERECHA------------->
 
      </div><!--FIN ROW PRINCIPAL----------->

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <title>MENU</title>
+    <title>Bienvenido SIGESHOP</title>
     <link rel="stylesheet" href="sweetalert2/dist/sweetalert2.min.css">
 
     <link rel="stylesheet" href="materialize/css/materialize.min.css">
@@ -13,50 +13,65 @@
     <script type="text/javascript" src="script.js"></script>
     <script type="text/javascript" src="sweetalert2/dist/sweetalert2.min.js"></script>
     <script type="text/javascript" src="materialize/js/materialize.min.js"></script>
-
     <script type="text/javascript">
-      $(document).ready(function(){
-        //$('.collapsible').collapsible();
-        //$('.button-collapse').sideNav('show');
+          $(document).ready(function(){
 
 
+            $('#titulo1').slideDown(800)
+            $('#titulo2').slideDown(900)
 
-      })
+          })
 
 
-    </script>
+        </script>
   </head>
-
-  <ul id="slide-out" class="side-nav side-nav fixed collapsible" data-collapsible="accordion">
-      <li><div class="user-view">
-       <a href="#!user"><img style="text-align:center;"src="img/lh.png"></a>
-       <p style="text-align:center;color:#01579b;">SIGESHOP</p>
-      </div></li>
-      <li><div class="divider"></div></li>
-       <li>
-         <div class="collapsible-header"><span class="blue-text name">Citas</span></div>
-         <div class="collapsible-body ">
-        <a id="link_crear_cita" href="//10.10.11.150:3080/menu.html"><p style="text-align:center;color:gray;">Modulo citas</p></a>
-
-      </div>
-      </li>
-      <li>
-        <div class="collapsible-header"><span class="blue-text name">Admisiones</span></div>
-        <div class="collapsible-body ">
-       <a id="link_crear_cita" href="//10.10.11.150:3000/ingreso"><p style="text-align:center;color:gray;">Hoja de ingresos</p></a>
-       <a id="link_buscar_cita" href="//10.10.11.150:3000/emergencia.html"><p style="text-align:center;color:gray;">Hoja de urgencia</p></a>
-       <a id="link_sticker" href="//10.10.11.150:3080/stickers.html"><p style="text-align:center;color:gray;">Imprmir sticker</p></a>
-     </div>
-     </li>
-     <li>
-       <div class="collapsible-header"><span class="blue-text name">Archivos</span></div>
-       <div class="collapsible-body ">
-      <a id="link_crear_cita" href="//10.10.11.150:3080/archivo.html"><p style="text-align:center;color:gray;">Modulo archivos</p></a>
+  <header>
+      <nav>
+    <div class="nav-wrapper  blue darken-1">
+      <a href="#" class="brand-logo center">SIGESHOP</a>
     </div>
-    </li>
-    </ul>
-    <a id="icono" href="#" data-activates="slide-out" class="button-collapse"><img  src="img/lh.png"></a><!--agregar id=icono a la etiqueta +----->
-  </body>
+    </nav>
+    </header>
 
-  </body>
-</html>
+    <div class="col s3"><!--pequeño--------->
+      <ul id="slide-out" class="side-nav side-nav fixed collapsible" data-collapsible="accordion">
+          <li><div class="user-view">
+           <a href="#!user"><img style="text-align:center;"src="img/lh.png"></a>
+           <p style="text-align:center;color:#01579b;">SIGESHOP</p>
+          </div></li>
+          <li><div class="divider"></div></li>
+           <li>
+             <div class="collapsible-header"><span class="blue-text name">Citas</span></div>
+             <div class="collapsible-body ">
+            <a id="link_crear_cita" href="//10.10.11.150:3080/menu.html"><p style="text-align:center;color:gray;">Modulo citas</p></a>
+          </div>
+          </li>
+          <li>
+            <div class="collapsible-header"><span class="blue-text name">Admisiones</span></div>
+            <div class="collapsible-body ">
+           <a id="link_crear_cita" href="//10.10.11.150:3000/ingreso"><p style="text-align:center;color:gray;">Hoja de ingresos</p></a>
+           <a id="link_buscar_cita" href="//10.10.11.150:3000/emergencia.html"><p style="text-align:center;color:gray;">Hoja de urgencia</p></a>
+           <a id="link_sticker" href="//10.10.11.150:3080/stickers.html"><p style="text-align:center;color:gray;">Imprmir sticker</p></a>
+         </div>
+         </li>
+         <li>
+           <div class="collapsible-header"><span class="blue-text name">Archivos</span></div>
+           <div class="collapsible-body ">
+          <a id="link_crear_cita" href="//10.10.11.150:3080/archivo.html"><p style="text-align:center;color:gray;">Modulo archivos</p></a>
+        </div>
+        </li>
+        </ul>
+        <a id="icono" href="#" data-activates="slide-out" class="button-collapse"><img  src="img/lh.png"></a><!--agregar id=icono a la etiqueta +----->
+
+    </div>
+    <div class="col s9" ><!--grande--------->
+      <div>
+        <p id='titulo1' style="display:none" class="center-align flow-text">BIENVENIDO</p>
+        <p id="titulo2" style="display:none" class="center-align flow-text">SISTEMA DE GESTIÓN HOSPITALARIA</p>
+  </div>
+
+    </div>
+
+
+    </body>
+  </html>

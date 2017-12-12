@@ -66,6 +66,7 @@ function cargar_nombre_medicos(serv,uni)
 }
 function cargar_nombre_unidades(data,per)
 {
+  UNIDADES[data]=per;
   var Base_de_Datos= new Conexion_BD(Configuracion_Base_saho);
   var Servicio='<option  disabled selected>Clinicas</option>';
   //console.log(data);
@@ -291,8 +292,62 @@ doc.moveDown();
 
 //console.log(listado_imprimir);
 })
+socket.on('imprimir_listado_archivo_extras',function(data) {
+  var currentdate = new Date();
+  var datetime = "" + currentdate.getDate() + "/"+ (currentdate.getMonth()+1)  + "/"+ currentdate.getFullYear() + "";
+  var fecha_impresion=datetime;
+  var hora_impresion = ""+ currentdate.getHours() + ":"+ currentdate.getMinutes() + ":" + currentdate.getSeconds();
+  PDFDocument = require('pdfkit');
+  doc = new PDFDocument({size:'legal'});
+  fs = require('fs');
+  doc.pipe(fs.createWriteStream('html/Reportes/Listado_'+cliente+"_extras.pdf"));
 
-  socket.on('archivo',function(data) {
+  doc.image(__dirname+'/html/img/lh.png', 50, 20, {width: 100});
+  doc.fontSize(6).text("  Fecha de impresion:"+fecha_impresion,{align: 'right'});
+  doc.fontSize(6).text("  Hora de impresion:"+hora_impresion,{align: 'right'});
+  doc.moveUp(6);
+  doc.fontSize(14).font('Times-Roman').fillColor('#005B99').text("                       Hospital General San Juan de Dios");
+  doc.fontSize(14).text("                       Sistema de Gestion Hospitalaria");
+  doc.fontSize(14).text("                       Registros medicos");
+  doc.moveUp();
+  doc.fontSize(5).text(".");
+  doc.fontSize(14).text("                       ______________________________________________________");
+  doc.moveDown();
+
+  doc.moveDown();
+  doc.fontSize(14).fillColor('black').text("                                                Busqueda de Expedientes");
+  doc.moveDown();
+  doc.fontSize(14).fillColor('black').text("Citas EXTRAS unidad: "+UNIDADES[data.unidad]);
+
+  doc.fontSize(14).fillColor('black').text("Fecha: "+data.fecha);
+  doc.fontSize(14).text("Cantidad de Expedientes: "+listado_imprimir[key_listado].length);
+
+  doc.moveDown();doc.moveDown();
+  //console.log(listado_imprimir[key_listado][0])
+  doc.fontSize(10).text("No.    Expediente    " +"  "+"Servicio    Unidad");
+  doc.moveUp();
+  doc.fontSize(10).text("  Entregado          Recibido    ",{align: 'right'});
+  doc.fontSize(5).text(".");
+  for(var i=0; i<listado_imprimir[key_listado].length;i++)
+  {
+    doc.fontSize(10).text((i+1001).toString().substring(1,4)+"   "+listado_imprimir[key_listado][i].exp +"    "+listado_imprimir[key_listado][i].unidad);
+    doc.moveUp();
+    doc.fontSize(10).text("__________     __________",{align: 'right'});
+
+    doc.fontSize(5).text(".");
+  }
+  doc.fontSize(12).text('         1a Avenida 10-50 Zona1, Sotano- TELEFONO: PBX: 22219191 EXT 6012-6013-DIRECTO: 23219124', 20, doc.page.height - 50,{
+    lineBreak: false
+  });
+  doc.end();
+    socket.emit('listado_exitoso',"http://"+Configuracion_Servidor.ip+":"+Configuracion_Servidor.puerto+"/Reportes/Listado_"+cliente+"_extras.pdf");
+    console.log("Solicitud de impresion extras desde cliente: "+cliente);
+
+
+//console.log(listado_imprimir);
+})
+
+  socket.on('archivo_extras',function(data) {
     //console.log(data);
     var Base_de_Datos= new Conexion_BD(Configuracion_Base);
     var Servicio='<div id="tabla_expedientes" class="row"><table class=" striped centered"> <thead><tr> <th>No. de expediente</th> <th>Clinica</th> </tr> </thead> <tbody>';
@@ -303,16 +358,16 @@ doc.moveDown();
       {
           //console.log("Exito al conectar");
 
-          var cadena ="sp_archivo_listado @empleado , @fecha";
+          var cadena ="sp_archivo_listado_especial @unidad , @fecha";
           listado_imprimir={}
           key_listado = 'Citas';
           listado_imprimir[key_listado] = [];
-              request = new Request(cadena,function(err, rowcount) { if (err) {console.log("Error en el request"+err);} if (rowcount) {
+              request = new Request(cadena,function(err, rowcount) { if (err) {console.log("Error en el request del archivo_extras"+err);} if (rowcount) {
 
                   }
                   Base_de_Datos.close();
-                    console.log("Se ha realizado una consulta de citas desde el cliente: "+cliente);
-                    socket.emit('tabla_archivo',Servicio);
+                    console.log("Se ha realizado una consulta de extras desde el cliente: "+cliente);
+                    socket.emit('tabla_archivo_extras',Servicio);
               });//fin del request
 
               request.on('doneProc',function (rowCount, more, rows) {
@@ -331,7 +386,7 @@ doc.moveDown();
                   Servicio+="<tbody><tr><td>"+anio+c+correlativo+"</td>"+"<td>"+UNIDADES[unidadn]+"</td></tr></tbody>";
                   listado_imprimir[key_listado].push({exp:anio+c+correlativo,unidad:UNIDADES[unidadn]});
               });
-              request.addParameter('empleado',TYPES.VarChar,data.usuario);
+              request.addParameter('unidad',TYPES.VarChar,data.unidad);
               request.addParameter('fecha',TYPES.VarChar,data.fecha);
 
               Base_de_Datos.execSql(request);
@@ -344,6 +399,57 @@ doc.moveDown();
     });
   });//cierre socket archivo
 
+  socket.on('archivo',function(data) {
+      //console.log(data);
+      var Base_de_Datos= new Conexion_BD(Configuracion_Base);
+      var Servicio='<div id="tabla_expedientes" class="row"><table class=" striped centered"> <thead><tr> <th>No. de expediente</th> <th>Clinica</th> </tr> </thead> <tbody>';
+      Base_de_Datos.on('connect', function(err)
+      {
+        if (err) {console.log(err);}
+        else
+        {
+            //console.log("Exito al conectar");
+
+            var cadena ="sp_archivo_listado @empleado , @fecha";
+            listado_imprimir={}
+            key_listado = 'Citas';
+            listado_imprimir[key_listado] = [];
+                request = new Request(cadena,function(err, rowcount) { if (err) {console.log("Error en el request"+err);} if (rowcount) {
+
+                    }
+                    Base_de_Datos.close();
+                      console.log("Se ha realizado una consulta de citas desde el cliente: "+cliente);
+                      socket.emit('tabla_archivo',Servicio);
+                });//fin del request
+
+                request.on('doneProc',function (rowCount, more, rows) {
+                    Servicio+="</tbody></table> ";
+                    //console.log(Servicio);
+                });
+                request.on('row',function(columns) {
+
+                    var anio=columns[0].value.toString();
+                    var correlativo=columns[1].value.toString();
+                    var ceros=7-correlativo.length;
+                    var c='';
+                    for(var i=0 ; i<ceros;i++)
+                      c+="0";
+                    var unidadn=columns[3].value.toString();
+                    Servicio+="<tbody><tr><td>"+anio+c+correlativo+"</td>"+"<td>"+UNIDADES[unidadn]+"</td></tr></tbody>";
+                    listado_imprimir[key_listado].push({exp:anio+c+correlativo,unidad:UNIDADES[unidadn]});
+                });
+                request.addParameter('empleado',TYPES.VarChar,data.usuario);
+                request.addParameter('fecha',TYPES.VarChar,data.fecha);
+
+                Base_de_Datos.execSql(request);
+
+        }
+      });//fin de connect
+      Base_de_Datos.on('error',function(err) {
+        console.log("se ha llamado a la funcion error :  \n"+err);
+        Base_de_Datos= new Conexion_BD(Configuracion_Base);
+      });
+    });//cierre socket archivo
 
 
   socket.on('medicos',function(data) {
@@ -389,6 +495,101 @@ doc.moveDown();
   });//cierre socket on mostrar doctores
 
 
+  socket.on('crear_cita_extra',function(data) {
+    var Base_de_Datos_linea= new Conexion_BD(Configuracion_Base);
+    Base_de_Datos_linea.on('connect', function(err)
+    {
+      if (err) {console.log(err);}
+      else
+      {
+          //console.log("Exito al conectar");
+
+          var cadena ="exec @linea = sp_cita_linea @anio, @correlativo,0";
+
+              request = new Request(cadena,function(err, rowcount) { if (err) {console.log("Error en el request"+err);} if (rowcount) {
+
+                  }
+                  Base_de_Datos_linea.close();
+                  var Base_de_Datos= new Conexion_BD(Configuracion_Base);
+                  Base_de_Datos.on('connect', function(err)
+                  {
+                    if (err) {console.log(err);}
+                    else
+                    {
+                        //console.log("Exito al conectar");
+
+                        var cadena ="exec sp_cita_ingreso_especial @anio, @correlativo, @servicio, @unidad, @fecha, @linea, @ip, @id_doctor, @hora,0";
+
+                            request = new Request(cadena,function(err, rowcount) { if (err) {console.log("Error en el request de crear cita extra"+err);
+                          console.log(data);} if (rowcount) {
+
+                                }
+                                Base_de_Datos.close();
+                                console.log('cita extra creada exitosamente');
+                                var dare={redirect:"http://"+Configuracion_Servidor.ip+":"+Configuracion_Servidor.puerto+'/Reportes/C'+cliente+".txt",fecha:data.fecha,clinica:UNIDADES[data.unidad]}
+
+                                socket.emit('cita_exitosa_extra',dare);
+
+                            });//fin del request
+
+                            request.on('doneProc',function (rowCount, more, rows) {
+
+                                //console.log("El procedimiento ha terminado ");
+                            });
+                            request.on('row',function(columns) {
+                                var id=columns[0].value.toString();
+
+                            });
+                            request.addParameter('anio',TYPES.Int,data.no_expediente.substring(0, 4));
+                            request.addParameter('correlativo',TYPES.Int,data.no_expediente.substring(4, 11));
+                            request.addParameter('servicio',TYPES.Int,data.servicio);
+                            request.addParameter('unidad',TYPES.Int,data.unidad);
+                            request.addParameter('fecha',TYPES.Date,data.fecha);
+                            request.addParameter('linea',TYPES.Int,data.linea);
+                            request.addParameter('ip',TYPES.VarChar,cliente);
+                            request.addParameter('id_doctor',TYPES.Int,data.id_doctor);
+                            request.addParameter('hora',TYPES.VarChar,data.hora);
+
+
+                            Base_de_Datos.execSql(request);
+
+                    }
+                  });//fin de connect
+                  Base_de_Datos.on('error',function(err) {
+                    console.log("se ha llamado a la funcion error :  \n"+err);
+                    Base_de_Datos= new Conexion_BD(Configuracion_Base);
+                  });
+
+
+              });//fin del request
+
+              request.on('doneProc',function (rowCount, more, rows) {
+
+                  //console.log("El procedimiento ha terminado ");
+              });
+              request.on('row',function(columns) {
+                  data.linea=columns[0].value.toString();
+
+              });
+              request.on('returnValue', function(parameterName, value, metadata) {
+                //console.log(parameterName + ' = ' + value);
+                data.linea=value;
+                //console.log("La linea que toca es "+data.linea)
+              });
+              request.addParameter('anio',TYPES.Int,data.no_expediente.substring(0, 4));
+              request.addParameter('correlativo',TYPES.Int,data.no_expediente.substring(4, 11));
+              request.addOutputParameter('linea',TYPES.Int);
+
+              Base_de_Datos_linea.execSql(request);
+
+      }
+    });//fin de connect
+    Base_de_Datos_linea.on('error',function(err) {
+      console.log("se ha llamado a la funcion error :  \n"+err);
+      Base_de_Datos= new Conexion_BD(Configuracion_Base);
+    });
+
+  });//final de on crear cita
 
 socket.on('crear_cita',function(data) {
   PDFDocument = require('pdfkit');
@@ -557,6 +758,67 @@ socket.on('buscar_cita_expediente',function(data) {
 });//final de on buscar_cita_expediente
 
 
+
+socket.on('comprobar_cita_extra',function(data) {
+  var Base_de_Datos= new Conexion_BD(Configuracion_Base);
+  //console.log(data);
+  Base_de_Datos.on('connect', function(err)
+  {
+    if (err) {console.log(err);}
+    else
+    {
+      var status={status:'-1',jsdata:data};
+        var cadena ="exec @status= sp_cita_verifica_especial @anio, @correlativo , @fecha , @servicio , @unidad ,0";
+
+            request = new Request(cadena,function(err, rowcount) { if (err) {console.log("Error en el request"+err);} if (rowcount) {
+
+                }
+                Base_de_Datos.close();
+                socket.emit('cita_posible_extra',status);
+
+            });//fin del request
+
+            request.on('doneProc',function (rowCount, more, rows) {
+
+                //console.log("El procedimiento ha terminado ");
+            });
+            request.on('row',function(columns) {
+                var id=columns[0].value.toString();
+                //console.log("Se ha encontrado un row "+id);
+
+            });
+            request.on('returnValue', function(parameterName, value, metadata) {
+              //console.log(parameterName + ' = ' + value);
+              status.status=value;
+              status.statusnombre=UNIDADES[value];
+            });
+
+            //console.log(data);
+            request.addParameter('anio',TYPES.Int,data.no_expediente.substring(0, 4));
+            request.addParameter('correlativo',TYPES.Int,data.no_expediente.substring(4, 11));
+            //request.addParameter('fecha',TYPES.Date,data.fecha);
+            request.addParameter('servicio',TYPES.Int,data.servicio);
+            request.addParameter('unidad',TYPES.Int,data.unidad);
+
+            //request.addParameter('anio',TYPES.Int,"2017");
+            //request.addParameter('correlativo',TYPES.Int,'0055001');
+            request.addParameter('fecha',TYPES.Date,data.fecha);
+            //request.addParameter('servicio',TYPES.Int,'1303');
+            //request.addParameter('unidad',TYPES.Int,1387);
+            request.addOutputParameter('status', TYPES.VarChar);
+
+            Base_de_Datos.execSql(request);
+
+    }
+  });//fin de connect
+
+
+  Base_de_Datos.on('error',function(err) {
+    console.log("se ha llamado a la funcion error :  \n"+err);
+    Base_de_Datos= new Conexion_BD(Configuracion_Base);
+  });
+
+});//final de on crear cita
 
 socket.on('comprobar_cita',function(data) {
   var Base_de_Datos= new Conexion_BD(Configuracion_Base);

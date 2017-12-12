@@ -34,10 +34,61 @@ $('.button-collapse').sideNav({
             );
   $('#link_crear_cita').click(function(){//agregar |
 
+
+        $('#crear_citas').hide(300);
+
+        $('#titulo').text("CITAS:");
         $('#crear_citas').show(300);
         $('#busqueda_cita').hide(300);
 
+        $('#btnGuardar_extra').hide();
+        $('#btnGuardar').show();
 
+        picker.set('min', fechaminimacitas, { muted: false });
+
+  })
+  function CrearPickDate(Estado, fe) {
+    if(Estado==1)
+      picker.stop();
+      else
+      {
+        $inputdatepicker.pickadate({
+          format:'yyyy-mm-dd',
+          selectYears: true,
+          selectMonths: true,
+          min:fe,
+          disable: [1, 7],
+          today: 'Hoy',
+          clear: 'Limpiar',
+          close: 'Cerrar',
+          monthsFull:['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+          weekdaysShort:['Dom','Lun','Mar','Mier','Juev','Vier','Sab'],
+          hiddenSuffix: '_submit',
+          showdaysShort: true,
+          weekdaysFull:['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'],
+          labelMonthNext: 'Siguiente mes',
+          labelMonthPrev: 'Mes anterior',
+          labelMonthSelect: 'Seleccionar mes',
+          labelYearSelect: 'Seleccionar año',
+
+        });
+      }
+  }
+
+
+  $('#link_crear_cita_extra').click(function(){//agregar |
+
+
+
+    $('#crear_citas').hide(300);
+
+        $('#titulo').text("CITAS EXTRAS:");
+        $('#crear_citas').show(300);
+        $('#btnGuardar').hide();
+        $('#btnGuardar_extra').show();
+
+        $('#busqueda_cita').hide(300);
+        picker.set('min', new Date(), { muted: false });
   })
   $('#btnNueva').click(function(){
           location.reload();
@@ -89,26 +140,27 @@ $('.button-collapse').sideNav({
   //fin menu
 
   $('#horaCita').pickatime();
-   $('#fechaCita').pickadate({
-     format:'yyyy-mm-dd',
-     selectYears: true,
-     selectMonths: true,
-     min:fechaminimacitas,
-     disable: [1, 7],
-     today: 'Hoy',
-     clear: 'Limpiar',
-     close: 'Cerrar',
-     monthsFull:['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
-     weekdaysShort:['Dom','Lun','Mar','Mier','Juev','Vier','Sab'],
-     hiddenSuffix: '_submit',
-     showdaysShort: true,
-     weekdaysFull:['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'],
-     labelMonthNext: 'Siguiente mes',
-     labelMonthPrev: 'Mes anterior',
-     labelMonthSelect: 'Seleccionar mes',
-     labelYearSelect: 'Seleccionar año',
+  var $inputdatepicker = $('#fechaCita').pickadate({
+    format:'yyyy-mm-dd',
+    selectYears: true,
+    selectMonths: true,
+    min:fechaminimacitas,
+    disable: [1, 7],
+    today: 'Hoy',
+    clear: 'Limpiar',
+    close: 'Cerrar',
+    monthsFull:['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+    weekdaysShort:['Dom','Lun','Mar','Mier','Juev','Vier','Sab'],
+    hiddenSuffix: '_submit',
+    showdaysShort: true,
+    weekdaysFull:['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'],
+    labelMonthNext: 'Siguiente mes',
+    labelMonthPrev: 'Mes anterior',
+    labelMonthSelect: 'Seleccionar mes',
+    labelYearSelect: 'Seleccionar año',
 
-   });
+  });
+  var picker = $inputdatepicker.pickadate('picker')
 
 
 
@@ -143,6 +195,15 @@ var linea_cliente=0;
     var datain=$("#area").val();
     console.log("area cambio");
     socket.emit('unidades_auto',datain);
+    if(datain==1305)
+    {
+      picker.set('disable', [1], { muted: false });
+      picker.set('enable', [7], { muted: false });
+    }
+    else
+    {
+      picker.set('disable', [1,7], { muted: false });
+    }
   });
   $('#clinica_u').on('change', function() {
     var unidad=$('#clinica').val();
@@ -264,6 +325,24 @@ socket.on('connect', () => {
 socket.on('mensaje',(data) =>{
     alert(data);
 });
+socket.on('cita_posible_extra',function(info) {
+  console.log(info);
+  if(info.status==0)
+  {
+    socket.emit('crear_cita_extra',info.jsdata);
+  }
+
+  else if(info.status==1)
+  {
+    //esta cita ya fue creada
+    swal(
+      'Error',
+      'Se ha alcazado el limite de citas para el dia seleccionado',
+      'error'
+    )
+  }
+
+});
 socket.on('cita_posible',function(info) {
   console.log(info);
   if(info.status==0)
@@ -354,6 +433,19 @@ socket.on('cita_exitosa',(data) =>{
     //window.open(data.redirect, "_blank");
 });
 
+socket.on('cita_exitosa_extra',(data) =>{
+  $('#selecciones').hide(200);
+  $('#divBotonGuardar').hide(200);
+  $('#tabla').show(200);
+  swal(
+    'Cita creada!',
+    'La cita se ha creado con exito. En la fecha: '+data.fecha.substring(8,10)+"/"+data.fecha.substring(5,7)+"/"+data.fecha.substring(0,4)+'  Para la clinica: '+data.clinica,
+    'success'
+  )
+  $('#btnNueva').show(300);
+  $('#textoNueva').show(300);
+});
+
 socket.on('reimpresion_cita_exitosa',function(data) {
   document.getElementById('download_txt').href=data.redirect;
   document.getElementById('download_txt').click();
@@ -401,6 +493,64 @@ $("#btnGuardar").click( function()
 
               console.log(jsdata);
               socket.emit('comprobar_cita',jsdata);
+
+              }, function (dismiss) {
+                // dismiss can be 'cancel', 'overlay',
+                // 'close', and 'timer'
+                if (dismiss === 'cancel') {
+                  swal(
+                    'Cancelada',
+                    'La cita ha sido cancelada',
+                    'error'
+                  )
+                }
+})
+
+            //fin mensaje
+
+          }
+
+});//fin boton guardar
+$("#btnGuardar_extra").click( function()
+        {
+          //alert($('#clinicas_u').val().toString().substring(5,70));
+            area = $('#area').val();
+            medico= $('#medico').val();
+            console.log(medico);
+            time= $('#horaCita').val();
+            date= $('#fechaCita').val();
+            clinica=$('#clinicas_u').val().toString().substring(0,4);
+          if (area==null ||area=="" || medico==""|| medico==null || time=="" || date=="" || clinica=="" )
+          {
+            swal('Debe llenar todos los campos');
+          }
+          else
+          {
+
+
+            //mensaje
+            swal({
+              title: 'Desea crear la cita?',
+              text: "Debe estar seguro de los datos del paciente!",
+              type: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Si, guardar cita!',
+              cancelButtonText: 'No, cancelar!',
+              confirmButtonClass: 'btn btn-success',
+              cancelButtonClass: 'btn btn-danger',
+              buttonsStyling: false
+            }).then(function () {
+              var jsdata={no_expediente:$('#nexpediente').val(),
+              fecha:$('#fechaCita').val(),
+              hora:$('#horaCita').val().replace('PM','').replace('AM',''),
+              servicio:$('#area').val(),nombre_servicio:$('#area option:selected').text(),nombre_unidad:$('#clinicas_u').val().toString().substring(5,70),nombre_medico:$('#medico option:selected').text(),
+              unidad:$('#clinicas_u').val().toString().substring(0,4),linea:linea_cliente,
+              id_doctor:$('#medico').val()};
+
+              console.log(jsdata);
+              socket.emit('comprobar_cita_extra',jsdata);
 
               }, function (dismiss) {
                 // dismiss can be 'cancel', 'overlay',

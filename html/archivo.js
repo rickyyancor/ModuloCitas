@@ -31,6 +31,26 @@ if(altura<= 848 && ancho <= 412){
 }
 
 
+$('#fecha_extras').pickadate({
+format:'yyyy-mm-dd',
+selectYears: true,
+selectMonths: true,
+min:new Date(),
+disable: [1, 7],
+today: 'Hoy',
+clear: 'Limpiar',
+close: 'Cerrar',
+monthsFull:['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+weekdaysShort:['Dom','Lun','Mar','Mier','Juev','Vier','Sab'],
+hiddenSuffix: '_submit',
+showdaysShort: true,
+weekdaysFull:['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'],
+labelMonthNext: 'Siguiente mes',
+labelMonthPrev: 'Mes anterior',
+labelMonthSelect: 'Seleccionar mes',
+labelYearSelect: 'Seleccionar año',
+
+});
   //fecha
   $('#fechaRegistros').pickadate({
   format:'yyyy-mm-dd',
@@ -64,6 +84,11 @@ if(altura<= 848 && ancho <= 412){
         location.reload();
 
   })
+  $('#btnrefrescar_extras').click(function(){
+
+        location.reload();
+
+  })
   $('#btnimprimir').click(function(){
 
     var fecha=$("#fechaRegistros").val();
@@ -73,9 +98,27 @@ if(altura<= 848 && ancho <= 412){
     socket.emit('imprimir_listado_archivo',jsdata);
 
   })
+  $('#btnimprimir_extras').click(function(){
 
+    var fecha=$("#fecha_extras").val();
+    var unidad=$("#area").val();
+    var jsdata={fecha:fecha,unidad:unidad}
+    socket.emit('imprimir_listado_archivo_extras',jsdata);
+
+  })
+  $('#div_extras').hide(300);
+  $('#archivosMedicos').show(300);
   $('#link_registros').click(function(){
-        $('#archivosMedicos').show(300);
+
+    $('#div_extras').hide(300);
+    $('#archivosMedicos').show(300);
+
+
+  })
+  $('#link_extras').click(function(){
+        $('#archivosMedicos').hide(300);
+        $('#div_extras').show(300);
+
   })
 
   $('#btnBuscarRegistros').click(function(){
@@ -83,8 +126,8 @@ if(altura<= 848 && ancho <= 412){
 
     if(nombre!=null && fecha!=""){
 
-      $('#seleccion').hide(300);
-      $('#titulo1').hide(300);
+      //$('#seleccion').hide(300);
+      //$('#titulo1').hide(300);
 
       var fecha=$("#fechaRegistros").val();
       var usuario=$("#users").val();
@@ -101,7 +144,40 @@ if(altura<= 848 && ancho <= 412){
           )
     }
   })
+  $('#btnBuscarExtras').click(function(){
+    fecha= $('#fecha_extras').val()
+    var unidad=$("#area").val();
+    if(unidad!=null && fecha!=""){
 
+
+
+
+      var jsdata={fecha:fecha,unidad:unidad}
+      socket.emit('archivo_extras',jsdata);
+
+    }
+    else {
+      swal(
+        'Oops...',
+        'Debe llenar todos los campos!',
+        'error'
+          )
+    }
+  })
+
+  $('select').material_select();
+  $('select').on('contentChanged', function() {
+    // re-initialize (update)
+    $(this).material_select();
+  });
+
+
+  socket.emit('servicios');
+  socket.on('llenar_servicios',(data)=>{
+    console.log(data);
+    var $selectareas =$("#area").empty().html(' ').append(data).trigger('contentChanged');
+
+  });//end on llenar servicios
 
 
 
@@ -110,6 +186,13 @@ socket.on('tabla_archivo',(data)=>{
   $('#tablaRegistros').show(300);
   $('#recargar').show(300);
   $('#paratablaexp').html(data);
+
+});//end on llenar servicios
+
+socket.on('tabla_archivo_extras',(data)=>{
+  $('#tabla_extras').show(300);
+  $('#recargar_extras').show(300);
+  $('#paratablaexp_extras').html(data);
 
 });//end on llenar servicios
 

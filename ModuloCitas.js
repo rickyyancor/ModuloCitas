@@ -1162,7 +1162,247 @@ var linea_cliente=0;
 
 
 
+  //edgar
 
+
+      socket.on('consultar_numero_expediente', function(data) {
+          console.log(data)
+          var time = new Date()
+          console.log(time)
+          var base_en_uso = "saho";
+          var Base_de_Datos = new Conexion_BD(Configuracion_Base_saho); //base saho
+          var Base_de_Datos1 = new Conexion_BD(Configuracion_Base); //base provisional
+          var estadob = 0; // estado de si existe o no
+          var Servicio = "<select id='unidades'>";
+          var tabla = '<h2>Expedientes sistema anterior</h2><div id="expedientes" class="table-wrapper"><table class=" striped centered"> <thead><tr> <th>año</th> <th>Correlativo</th><th>Primer nombre</th><th>Segundo nombre</th><th>Primer apellido</th><th>Segundo apellido</th> </tr> </thead> <tbody>';
+          var tabla2 = '<h2>Personas existentes</h2><div id="expedientes" class="table-wrapper"><table class=" striped centered"> <thead><tr> <th>año</th> <th>Correlativo</th><th>Primer nombre</th><th>Segundo nombre</th><th>Primer apellido</th><th>Segundo apellido</th> </tr> </thead> <tbody>';
+          var contadors = 0,
+              contadorp = 0
+              //data = data.replace('-', '');
+              // var anio = data.toString().substring(0, 5);
+              // var correlativo = data.toString().substring(4, 12);
+              //console.log(anio);
+              /*   var respuesta = {};
+                 var respuestap = {};*/
+          var listado_personas = {}
+          var key_personas = 'Personas';
+          listado_personas[key_personas] = [];
+
+          var listado_personasp = {}
+          var key_personasp = 'PersonasP';
+          listado_personasp[key_personasp] = [];
+
+          var encontrado_provisional = false
+          var encontrado_saho = false
+
+          //console.log(correlativo);
+          Base_de_Datos.on('connect', function(err) //conexion base de datos saho
+              {
+                  console.log('conexion a base de datos saho ')
+                  if (err) { console.log(err); } else {
+                      //var cadena ="sp_expediente_consulta @anio , @correlativo"; --anterior
+                      var cadena = 'sp_expediente_consulta_nombre @nombre1, @nombre2, @apellido1, @apellido2'
+
+                      request = new Request(cadena, function(err, rowcount) {
+                          if (err) {
+                              console.log("Error en el request" + err);
+                          }
+
+                          if (rowcount) {
+
+                          }
+                          console.log(Object.keys(listado_personas).length);
+                          if (Object.keys(listado_personas).length === 0) {
+                              estadob += 1;
+                              if (estadob > 1) {
+                                  socket.emit('Expediente_no_existe');
+
+                              }
+                          } else {
+                              if (encontrado_saho)
+                                  socket.emit('Expediente_encontrado_saho', tabla, contadors);
+
+                              else {
+                                  estadob += 1;
+                                  if (estadob > 1) {
+                                      socket.emit('Expediente_no_existe');
+                                  }
+                              }
+                              console.log(`CONTADOR S ES IGUAL S ${contadors}`)
+                          }
+                          console.log('callback del request')
+                          Base_de_Datos.close();
+                      }); //fin del request
+
+
+                      request.addParameter('nombre1', TYPES.VarChar, data.nombre1);
+                      request.addParameter('nombre2', TYPES.VarChar, data.nombre2);
+                      request.addParameter('apellido1', TYPES.VarChar, data.apellido1)
+                      request.addParameter('apellido2', TYPES.VarChar, data.apellido2)
+                      console.log('se agregaron parametros')
+
+                      request.on('doneProc', function(rowCount, more, rows) {
+                          tabla += "</tbody></table></div> ";
+                          //console.log("El procedimiento ha terminado ");
+                          //"</tbody></table>"
+                          console.log('se termino el procedimiento')
+                      });
+                      request.on('row', function(columns) {
+
+                          encontrado_saho = true
+                          var anioFiscal = columns[0].value;
+                          var correlativo = columns[1].value;
+                          var nombre1 = columns[2].value;
+                          var nombre2 = columns[3].value;
+                          var apellido1 = columns[4].value;
+                          var apellido2 = columns[5].value;
+                          contadors++
+                          tabla += "<tbody><tr><td>" + anioFiscal + "</td><td>" + correlativo + "</td><td>" + nombre1 + "</td><td>" + nombre2 + "</td><td>" + apellido1 + "</td><td>" + apellido2 + "</td></tr>";
+                          // console.log(tabla) // ver tabla
+                          /*var json = {
+                              anioFiscal: anioFiscal,
+                              correlativo: correlativo,
+                              nombre1: nombre1,
+                              nombre2: nombre2,
+                              apellido1: apellido1,
+                              apellido2: apellido2
+                          }*/
+
+                          listado_personas[key_personas].push({
+                                  anioFiscal: anioFiscal,
+                                  correlativo: correlativo,
+                                  nombre1: nombre1,
+                                  nombre2: nombre2,
+                                  apellido1: apellido1,
+                                  apellido2: apellido2
+                              })
+                              /* respuesta = {
+                                   //exp:data,
+                                   anioFiscal: anioFiscal,
+                                   correlativoExp: correlativoExp,
+                                   nombre1: nombre1,
+                                   nombre2: nombre2,
+                                   apellido1: apellido1,
+                                   apellido2: apellido2,
+                                   edad: edad
+                               };*/
+                              //console.log(respuesta);
+
+                      });
+
+                      Base_de_Datos.execSql(request);
+
+                  }
+              }); //fin de connect
+
+
+          Base_de_Datos.on('error', function(err) {
+              console.log("se ha llamado a la funcion error :  \n" + err);
+              Base_de_Datos = new Conexion_BD(Configuracion_Base);
+          }); //evento on en caso de error
+
+
+          Base_de_Datos1.on('connect', function(err) // conexion base de datos provisional
+              {
+                  if (err) { console.log(err); } else {
+                      var cadena = "sp_expediente_consulta_nombre @nombre1 , @nombre2, @apellido1, @apellido2";
+
+                      request = new Request(cadena, function(err, rowcount) {
+                          if (err) {
+                              console.log("Error en el request" + err);
+                          }
+                          if (rowcount) {
+
+                          }
+                          console.log(Object.keys(listado_personas).length)
+                          if (Object.keys(listado_personas).length === 0) {
+                              estadob += 1;
+                              if (estadob > 1) {
+                                  socket.emit('Expediente_no_existe');
+                              }
+                          } else {
+                              if (encontrado_provisional)
+                                  socket.emit('Expediente_encontrado_provisional', tabla2, contadorp);
+
+                              else {
+                                  estadob += 1;
+                                  if (estadob > 1) {
+                                      socket.emit('Expediente_no_existe');
+                                  }
+                              }
+                              console.log(`CONTADOR P ES IGUAL A ${contadorp}`)
+                          }
+
+                          Base_de_Datos1.close();
+
+
+
+
+                      }); //fin del request
+                      request.addParameter('nombre1', TYPES.VarChar, data.nombre1);
+                      request.addParameter('nombre2', TYPES.VarChar, data.nombre2);
+                      request.addParameter('apellido1', TYPES.VarChar, data.apellido1);
+                      request.addParameter('apellido2', TYPES.VarChar, data.apellido2);
+
+
+                      request.on('doneProc', function(rowCount, more, rows) {
+                          tabla2 += "</tbody></table></div> ";
+                          //console.log("El procedimiento ha terminado ");
+                      });
+                      request.on('row', function(columns) {
+                          encontrado_provisional = true
+
+                          var expedienteP = columns[0].value;
+                          var anioFiscal = expedienteP.toString().substring(0, 4)
+                          var correlativo = expedienteP.toString().substring(4, 9)
+                          var nombre1 = columns[1].value;
+                          var nombre2 = columns[2].value;
+                          var apellido1 = columns[3].value;
+                          var apellido2 = columns[4].value;
+
+                          contadorp++
+
+                          tabla2 += "<tbody><tr><td>" + anioFiscal + "</td><td>" + correlativo + "</td><td>" + nombre1 + "</td><td>" + nombre2 + "</td><td>" + apellido1 + "</td><td>" + apellido2 + "</td></tr>";
+
+
+                          /* jsonP = {
+                               //exp:data,
+                               // expedienteP: expedienteP,
+                               anioFiscal: anioFiscal,
+                               correlativo: correlativo,
+                               nombre1: nombre1,
+                               nombre2: nombre2,
+                               apellido1: apellido1,
+                               apellido2: apellido2
+                           };*/
+
+                          listado_personas[key_personas].push({
+                                  //exp:data,
+                                  // expedienteP: expedienteP,
+                                  anioFiscal: anioFiscal,
+                                  correlativo: correlativo,
+                                  nombre1: nombre1,
+                                  nombre2: nombre2,
+                                  apellido1: apellido1,
+                                  apellido2: apellido2
+                              })
+                              //console.log(respuesta);
+
+                      });
+
+                      Base_de_Datos1.execSql(request);
+
+                  }
+              }); //fin del segundo connect
+
+
+
+      });
+
+
+
+
+      // fin edgar
 
 
 

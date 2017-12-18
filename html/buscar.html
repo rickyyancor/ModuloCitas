@@ -1,0 +1,204 @@
+<!DOCTYPE HTML>
+
+<html>
+	<head>
+		<title>BUSQUEDA DE PACIENTES</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="spectral/assets/css/main.css" />
+		<link rel="stylesheet" href="sweetalert2/dist/sweetalert2.min.css">
+		<script src="socket.io/socket.io.js"></script>
+
+	</head>
+	<body>
+
+			<div id="page-wrapper">
+			<header style="background-color:#2196f3" id="header">
+						<h1><a href="#">Busqueda de pacientes</a></h1>
+					</header>
+
+				<article id="main">
+
+					<section class="wrapper style5">
+						<div class="inner">
+							<div id="divEncabezado"></div><!--Fin div encabezado------->
+							<div id="divBusqueda"><!--Inicia div de la busqueda------->
+								<section>
+								<h4>Datos:</h4><br/>
+
+									<div class="row uniform">
+										<div class="6u 12u$(small)">
+											<input type="text" name="demo-name" id="nombre1" value="" placeholder="Primer nombre" />
+										</div>
+										<div class="6u 12u$(small)">
+											<input type="text" name="demo-email" id="nombre2" value="" placeholder="Segundo nombre" />
+										</div>
+										<div class="6u 12u$(small)">
+											<input type="text" name="demo-email" id="apellido1" value="" placeholder="Primer apellido" />
+										</div>
+										<div class="6u 12u$(small)">
+											<input type="text" name="demo-email" id="apellido2" value="" placeholder="Segundo apellido" />
+										</div>
+									</div>
+									<br/><br/>
+									<button class="button special" id="buscar">Buscar</button>
+							</section>
+						</div> <!--Div de busqueda------>
+							<br>
+						<div id="divResultado1" ><!--Div de resultado------>
+
+								<p id="tab1"></p>
+
+								</div><!--fin div de resultado------>
+								<div id="divResultado2">
+										<p id="tab2"></p>
+								</div>
+						</div>
+					</section>
+				</article>
+
+
+
+
+
+				<!-- Footer -->
+					<footer style="background-color:#1565c0" id="footer">
+						<ul class="copyright">
+							<li>&copy; Hospital San Juan de Dios</li><li>Design: <a href="#">Informatica 2017</a></li>
+						</ul>
+					</footer>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="spectral/assets/js/jquery.min.js"></script>
+			<script src="spectral/assets/js/jquery.scrollex.min.js"></script>
+			<script src="spectral/assets/js/jquery.scrolly.min.js"></script>
+			<script src="spectral/assets/js/skel.min.js"></script>
+			<script src="spectral/assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="spectral/assets/js/main.js"></script>
+			<script type="text/javascript" src="sweetalert2/dist/sweetalert2.min.js"></script>
+			<script type="text/javascript">
+			var _nombre1, _nombre2, _apellido1, _apellido2, fJson, tablaS=" ", tablaP
+
+					$(document).ready(function(){
+						var socket=io();
+
+					$('#buscar').click(function(){
+								$('#tab1').empty()
+									$('#tab2').empty()
+							_nombre1 = $('#nombre1').val().trim();
+							_nombre2 = $('#nombre2').val().trim();
+							_apellido1 = $('#apellido1').val().trim();
+							_apellido2 = $('#apellido2').val().trim();
+							fJson=
+							{
+										nombre1 : _nombre1,
+										nombre2: _nombre2,
+										apellido1: _apellido1,
+										apellido2: _apellido2
+							}
+
+
+							if( _nombre1 == "" && _nombre2 =="" && _apellido1 =="" && _apellido2 == "")
+							{
+													swal(
+														'Error!',
+														'Debe llenar por lo menos un campo!',
+														'error'
+													)
+							}
+							else
+							{
+								socket.emit('consultar_numero_expediente',fJson)
+							}
+
+
+
+				})//fin del boton
+
+				socket.on('Expediente_no_existe',function() {
+					swal(
+							'Error!',
+							'no se encontro el expediente',
+							'error'
+							)
+							$('#tab1').empty()
+							$('#tab2').empty()
+
+		});
+
+		/*socket.on('mala_busqueda', function(){
+
+			swal(
+					'Observacion',
+					'Llene mas campos para la busqueda',
+					'warning'
+					)
+
+		})*/
+
+				socket.on('Expediente_encontrado_saho',function(data, contador1) {
+
+			/*		if(contador1>15)
+					{
+						swal(
+							'Observacion',
+							'Agregue mas campos a la busqueda',
+							'warning'
+						)
+					}*/
+					//else {
+					//tablaS = data
+						$('#tab2').html(data)
+					console.log('correcto'+" "+contador1)
+					//$('#tab1').html(tablaP+tablaS+"</tbody></table></div>")
+				//	}
+
+						/*$('#tab2').html(data)
+					console.log('correcto'+" "+contador1)
+					if(tamano===0)
+					{
+						tamano=data['Personas'].length;
+						console.log(tamano)
+					}
+					else {
+						console.log('ahora se iniciara a recorrer en la posicion ', tamano,'el tamano nuevo es de ',data['Personas'].length )
+					}
+*/
+				//	console.log(data['Personas'])
+					/*for(var i = 0; i<longitud; i++)
+					{
+						//$('tabla').html(``)
+							console.log(data['Personas'][i].nombre1);
+					}*/
+
+
+		});
+		socket.on('Expediente_encontrado_provisional', function(data, contador2){
+
+		/*	if(contador2>15)
+			{
+				swal(
+					'Observacion',
+					'Agregue mas campos a la busqueda',
+					'warning'
+				)
+			}*/
+			//else
+			//{
+			//tablaP = data
+						$('#tab1').html(data)
+							console.log('correcto2'+" "+contador2)
+		//	}
+
+
+
+		})
+
+				})
+			</script>
+
+	</body>
+</html>
